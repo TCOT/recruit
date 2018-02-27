@@ -2,10 +2,11 @@
     <div style="padding-right: 250px">
         <el-card class="box-card">
 
-            <el-table :data="projects"
+            <el-table   v-loading="loading"
+                    :data="projects"
                       style="width: 100%">
                 <el-table-column
-                        label="发布日期" width="180">
+                        label="发布日期" width="180" >
                     <template slot-scope="scope">
                         <span>{{ scope.row.releaseTime }}</span>
                     </template>
@@ -49,6 +50,7 @@
                     if (res.status == "0") {
                         this.projects = res.result.list;
                     }
+                    this.loading=false
                 })
             },
             toDetail(index, row) {
@@ -71,7 +73,8 @@
         },
         data() {
             return {
-                projects: []
+                projects: [],
+                loading:true
             }
         }
     }
