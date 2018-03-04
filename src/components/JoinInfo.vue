@@ -1,9 +1,8 @@
 <template>
     <div>
-        <template>
-            <el-table
-                    :data="projects5"
-                    style="width: 60%">
+        <el-card class="signInfoCard">
+            <el-table :data="projects5" class="siGnInfoTable"
+                      v-loading="loading">
                 <el-table-column
                         label="已报名项目"
                         width="300">
@@ -25,7 +24,7 @@
                     </template>
                 </el-table-column>
             </el-table>
-        </template>
+        </el-card>
     </div>
 </template>
 
@@ -38,7 +37,8 @@
         },
         data() {
             return {
-                projects5: []
+                projects5: [],
+                loading:true
             }
         },
         methods: {
@@ -49,10 +49,11 @@
                     }
                 }).then((response) => {
                     var res = response.data;
-                    console.log(res)
                     if (res.status == "0") {
                         this.projects5 = res.result.projects;
+                        this.loading=false
                     }
+
                 })
             },
         }
@@ -60,5 +61,13 @@
 </script>
 
 <style>
-
+    .siGnInfoTable{
+        text-align: left;
+    }
+    .signInfoCard{
+        width: 800px;
+        height: 400px;
+        margin-top: 100px;
+        margin-left: 70px;
+    }
 </style>

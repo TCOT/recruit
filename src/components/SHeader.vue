@@ -1,105 +1,41 @@
 <template>
-    <header class="header">
-        <div class="navbar">
-            <div class="navbar-left-container">
-                <a href="/"><i class="fa fa-user-circle-o fa-3x"></i></a>
-                <div class="teacher">学生端</div>
-            </div>
-            <div class="navbar-right-container" style="display: flex;">
-                <div class="navbar-menu-container">
-                    <span class="navbar-link" v-text="nickName"></span>
-                    <a href="javascript:void(0)" class="navbar-link" @click="logOut" >退出</a>
-                </div>
+    <div class="banner" >
+        <div class="header-inner">
+            <i class="fa fa-user-circle fa-2x" style="font-size: 40px"></i>
+                <span style="margin-left:20px ;font-size: 22px">学生端</span>
+            <div class="info"> <span style="font-size: 22px;margin-right: 20px;" v-text="nickName"></span>
+                <el-button type="primary" round size="small" @click="logOut">安全退出</el-button>
             </div>
         </div>
-    </header>
+    </div>
 </template>
 
 <style>
-    .teacher {
-        margin: 0 0 0 10px;
-    }
-
-    .header {
-        position: relative;
-        width: 100%;
-        background-color: white;
-        font-family: "moderat", sans-serif;
-        font-size: 16px;
-    }
-
-    .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-content: center;
-        width: 100%;
-        height: 70px;
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 5px 20px 10px 20px;
-    }
-
-    .navbar-left-container {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        margin-left: 20px;
-    }
-
-    .navbar-brand-logo {
-        /*width: 120px;*/
-    }
-
-    .header a, .footer a {
-        color: #666;
-        text-decoration: none;
-    }
-
-    a {
-          -webkit-transition: color .3s ease-out;
-        transition: color .3s ease-out;
-    }
-
-    .navbar-right-container {
-        display: none;
-        justify-content: flex-start;
-        align-items: center;
-    }
-
-    .navbar-menu-container {
-        display: flex;
+    .info{
         justify-content: flex-end;
+        display: flex;
+        flex: 1;
         align-items: center;
-        padding-top: 10px;
     }
-
-    .navbar-link {
-        padding-left: 15px;
-    }
-
-    .navbar-cart-container {
+    .header-inner {
         position: relative;
-    }
-
-    .navbar-cart-count {
-        justify-content: center;
+        display: flex;
+        width: 1200px;
+        height: 52px;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -moz-box-align: center;
+        margin: 0 auto;
         align-items: center;
-        position: absolute;
-        top: -9px;
-        right: -11px;
-        width: 20px;
-        border-radius: 10px;
-        color: white;
-        background-color: #eb767d;
-        font-size: 16px;
-        font-weight: bold;
-        text-align: center;
     }
 
-    .navbar-cart-logo {
-        width: 25px;
-        height: 25px;
-        transform: scaleX(-1);
+    .banner {
+        z-index: 100;
+        position: relative;
+        min-width: 1032px;
+        height: 52px;
+        background-color: white;
+        box-shadow: 0 1px 3px 0 rgba(26, 26, 26, .1);
     }
 </style>
 
@@ -109,12 +45,12 @@
 
     export default {
         computed: {
-            nickName(){
+            nickName() {
                 return this.$store.state.nickName;
             },
             // ...mapState(['nickName'])
         },
-        methods:{
+        methods: {
             logOut() {
                 axios.post("/users/logout").then((response) => {
                     let res = response.data;

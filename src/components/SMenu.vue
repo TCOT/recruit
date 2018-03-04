@@ -34,8 +34,7 @@
 
 <style>
     .el-col-12 {
-        float: right;
-        margin-top: 100px;
-        margin-right: 30px;
+        width: 100%;
+        margin-top: 150px;
     }
 </style>

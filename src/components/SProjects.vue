@@ -1,10 +1,10 @@
 <template>
     <div style="padding-right: 250px">
-        <el-card class="box-card">
-
+        <el-card class="allProjectCard">
             <el-table   v-loading="loading"
                     :data="projects"
-                      style="width: 100%">
+                      style="width: 100%"
+            class="listProjectTable">
                 <el-table-column
                         label="发布日期" width="180" >
                     <template slot-scope="scope">
@@ -81,7 +81,13 @@
 </script>
 
 <style>
-    .el-table__row {
+    .listProjectTable{
         text-align: left;
+    }
+    .allProjectCard{
+        width: 800px;
+        height: 400px;
+        margin-top: 100px;
+        margin-left: 70px;
     }
 </style>
