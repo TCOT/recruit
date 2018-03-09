@@ -18,6 +18,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 0px;
-  background-color: #f6f6f6;
+  /*background-color: #f6f6f6;*/
 }
 </style>

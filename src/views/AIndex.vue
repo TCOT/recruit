@@ -1,64 +1,50 @@
 <template>
-    <div>
-        <el-container>
-            <el-header >
-                <nav-header></nav-header>
-            </el-header>
-            <el-container>
-                <el-aside width="300px" >
-                    <menu-group @choose="change"></menu-group>
-                </el-aside>
-                <el-main>
-                    <component :is="tabView" ></component>
-                </el-main>
-            </el-container>
-        </el-container>
+    <div class="index">
+        <a-header></a-header>
+        <div class="amain">
+            <a-menu></a-menu>
+            <router-view></router-view>
+        </div>
     </div>
 </template>
 
 <script>
-    import NavHeader from './../components/NavHeader'
-    import MenuGroup from './../components/MenuGroup'
-    import QuillEditor from './../components/quillEditor'
+    import AHeader from '../components/AHeader'
+    import AMenu from '../components/AMenu'
+    import ProjectList from './../components/ProjectList'
     import Publish from './../components/Publish'
-    import ProjectDet from './../components/ProjectDet'
-    import ProjectDetail from './../components/ProjectDetail'
-
     export default {
         components: {
-            NavHeader,
-            MenuGroup,
-            QuillEditor,
-            Publish,
-            ProjectDet,
-            ProjectDetail
+            AHeader,
+            AMenu,
+            ProjectList,
+            Publish
         },
-        computed:{
-            change(){
-                if(this.$store.state.selection == 1){
-                    this.tabView = "ProjectDet"
-                    return
-                }else if(this.$store.state.selection == 2){
-                    this.tabView = "QuillEditor"
-                }else if(this.$store.state.selection == 3){
-                }else if(this.$store.state.selection == 4){
-                    this.tabView = "ProjectDetail"
-                }else if(this.$store.state.selection == 5){
-                }
-            }
-        },
+        computed: {
+        }
     }
 
 </script>
 
 <style>
-    .el-main{
+    .amain{
+        display: flex;
+        position: relative;
+        box-align: start;
+        align-items: flex-start;
+        width: 1200px;
+        padding: 0 16px;
+        margin: 10px auto;
+    }
+    .el-main {
         padding-top: 50px;
     }
-    .el-header{
+
+    .el-header {
         height: 75px;
     }
-    .el-aside{
+
+    .el-aside {
         width: 270px;
         padding-top: 50px;
     }

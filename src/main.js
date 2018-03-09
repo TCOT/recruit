@@ -21,14 +21,12 @@ Vue.use(Vuex);
 Vue.use(ElementUI)
 Vue.use(quillEditor)
 
-
 Vue.config.productionTip = false
 
 const store = new Vuex.Store({
     state: {
         nickName: '',
         project:'',
-        selection:0
     },
     mutations: {
         //更新用户信息
@@ -38,10 +36,7 @@ const store = new Vuex.Store({
         //更新项目详情
         updateProject(state, project) {
             state.project = project;
-        },
-        updateSelection(state, selection) {
-            state.selection = selection;
-        },
+        }
     }
 });
 /* eslint-disable no-new */

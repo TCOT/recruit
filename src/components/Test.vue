@@ -1,13 +1,15 @@
 <template>
-    <div></div>
+    <div>
+        aasd
+    </div>
 </template>
 
 <script>
     export default {
-        name: "top-three"
+        name: "test"
     }
 </script>
 
-<style>
+<style scoped>
 
 </style>

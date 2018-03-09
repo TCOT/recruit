@@ -6,7 +6,8 @@ var projectSchema = new mongoose.Schema({
     "projectName": String,
     "releaseTime":String,
     "projectContent":String,
-    "students":Array
+    "students":Array,
+    "stuNum":Number
 });
 
 module.exports = mongoose.model("Project", projectSchema);

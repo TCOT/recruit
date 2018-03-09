@@ -52,7 +52,6 @@
                     });
                     return;
                 }
-                alert("--")
                 axios.post("/projects/publish", {
                     userName: this.$store.state.nickName,
                     projectName: this.projectName,

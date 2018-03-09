@@ -26,7 +26,7 @@
                 <el-table-column
                         prop="address" label="操作">
                     <template slot-scope="scope">
-                        <el-button type="primary" plain icon="el-icon-message"
+                        <el-button type="primary"  icon="el-icon-message"
                                    @click="toDetail(scope.$index,scope.row)">查看详情
                         </el-button>
                     </template>
@@ -54,9 +54,6 @@
                 })
             },
             toDetail(index, row) {
-                // alert(index)
-                // alert(this.projects[index].projectId)
-                this.$store.commit("updateSelection", 5)
                 var param = {
                     projectId : this.projects[index].projectId
                 }
@@ -64,9 +61,8 @@
                     params:param
                 }).then((response) => {
                     var res = response.data;
-                    console.log(res)
                     if (res.status == "0") {
-                        this.$store.commit("updateProject", res.result.project)
+                        this.$router.push("/sindex/sprojects/" + this.projects[index].projectId)
                     }
                 })
             }

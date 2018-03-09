@@ -8,7 +8,7 @@
                     <i class="el-icon-tickets" style="font-size: 24px"></i>
                     <span slot="title" style="font-size: 16px;">个人信息</span>
                 </el-menu-item>
-                <el-menu-item index="2" @click="select(2)">
+                <el-menu-item  @click="select(2)">
                     <i class="el-icon-view" style="font-size: 24px"></i>
                     <span slot="title" style="font-size: 16px;">项目列表</span>
                 </el-menu-item>
@@ -23,10 +23,21 @@
 
 <script>
     export default {
+        mounted() {
+            this.init()
+        },
         methods:{
+            init(){
+                this.$router.push("/sindex/sinfo")
+            },
             select(index){
-                this.$store.commit("updateSelection", index)
-                this.$emit('choose',index)
+                if(index == 1){
+                    this.$router.push("/sindex/sinfo")
+                }else if(index == 2){
+                    this.$router.push("/sindex/sprojects")
+                }else {
+                    this.$router.push("/sindex/joininfo")
+                }
             }
         }
     }

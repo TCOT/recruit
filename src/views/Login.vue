@@ -161,7 +161,6 @@
             };
         },
         methods: {
-
             register() {
                 // alert(this.ruleForm2.userName)
                 if (this.flag1 && this.flag2 && this.flag3) {
@@ -221,15 +220,15 @@
                     let res = response.data;
                     if (res.status == "01") {
                         this.$store.commit("updateUserInfo", res.result.userName)
-                        this.$router.push("/aindex")
+                        this.$router.push("/aindex/projectlist")
                         this.$message({
                             type: 'success',
-                            message: '欢迎老师进入管理界面',
+                            message: '欢迎进入管理界面',
                             center: true
                         });
                     } else if (res.status == "00") {
                         this.$store.commit("updateUserInfo", res.result.userName)
-                        this.$router.push("/sindex")
+                        this.$router.push("/sindex/sinfo")
                         this.$message({
                             type: 'success',
                             message: '登陆成功，进入个人主页',

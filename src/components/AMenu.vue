@@ -23,9 +23,21 @@
 
 <script>
     export default {
+        mounted() {
+            this.init()
+        },
         methods:{
+            init(){
+                this.$router.push("/aindex/projectlist")
+            },
             select(index){
-                this.$store.commit("updateSelection", index)
+                if(index == 1){
+                    this.$router.push("/aindex/projectlist")
+                }else if(index == 2){
+                    this.$router.push("/aindex/publish")
+                }else {
+
+                }
             }
         }
     }
@@ -33,8 +45,8 @@
 
 <style >
     .el-col-12{
-        float: right;
-        margin-top: 100px;
-        margin-right: 30px;
+        width: 100%;
+        margin-top: 150px;
+
     }
 </style>

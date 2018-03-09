@@ -2,7 +2,7 @@
     <div class="banner" >
         <div class="header-inner">
             <i class="fa fa-user-circle fa-2x" style="font-size: 40px"></i>
-                <span style="margin-left:20px ;font-size: 22px">学生端</span>
+            <span style="margin-left:20px ;font-size: 22px">教师端</span>
             <div class="info"> <span style="font-size: 22px;margin-right: 20px;" v-text="nickName"></span>
                 <el-button type="primary" round size="small" @click="logOut">安全退出</el-button>
             </div>

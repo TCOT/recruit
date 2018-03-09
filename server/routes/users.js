@@ -26,58 +26,28 @@ router.get('/', function (req, res, next) {
 
 module.exports = router;
 
-//用户注册
-router.post("/register", (req, res, next) => {
-    var user = mongoose.model("User")
-    var platform = '622';
-    var r1 = Math.floor(Math.random() * 10);
-    var r2 = Math.floor(Math.random() * 10);
-    var sysDate = new Date().Format('yyyyMMddhhmmss')
-    var newUser = new user({
-        userId: platform + r1 + sysDate + r2,
-        userName: req.body.userName,
-        userPwd: req.body.userPwd,
-        auth: 0,
-        projects: []
-    })
-    newUser.save(function (err1, doc1) {
-        if (err1) {
+//提交个人信息
+router.post("/submitInfo", (req, res, next) => {
+    User.update({userName: req.body.userName}, {
+        "info.name": req.body.name,
+        "info.sex": req.body.sex,
+        "info.major": req.body.major,
+        "info.classNum": req.body.classNum,
+        "info.qqNum": req.body.qqNum,
+        "info.phoneNum": req.body.phoneNum
+    }, function (err, doc) {
+        if (err) {
             res.json({
-                status: "1",
-                msg: err1.message
-            })
+                status: '1',
+                msg: err.message,
+                result: ''
+            });
         } else {
             res.json({
                 status: '0',
                 msg: '',
                 result: 'suc'
-            })
-        }
-    })
-
-})
-
-//用户注册校验
-router.post("/cheackRegister", (req, res, next) => {
-    User.findOne({userName: req.body.userName}, (err1, doc1) => {
-        if (err1) {
-            res.json({
-                status: "1",
-                msg: err1.message
-            })
-        } else {
-            if (doc1) {
-                console.log(doc1)
-                res.json({
-                    status: '01',
-                    msg: '此学号已注册'
-                })
-            } else {
-                res.json({
-                    status: '00',
-                    msg: '此学号可用'
-                })
-            }
+            });
         }
     })
 })
@@ -91,6 +61,7 @@ router.post("/publish", (req, res, next) => {
             })
         } else {
             if (userDoc) {
+                console.log()
                 var platform = '622';
                 var r1 = Math.floor(Math.random() * 10);
                 var r2 = Math.floor(Math.random() * 10);
@@ -122,6 +93,110 @@ router.post("/publish", (req, res, next) => {
         }
     })
 
+})
+//获取个人信息
+router.get("/getUserInfo", (req, res, next) => {
+    User.findOne({userName: req.param("userName")}, (err1, doc1) => {
+        if (err1) {
+            res.json({
+                status: "1",
+                msg: err1.message
+            })
+        } else {
+            if (doc1) {
+                res.json({
+                    status: '0',
+                    msg: '',
+                    result: {
+                        info: doc1.info
+                    }
+                });
+            }
+        }
+    })
+})
+//学生获取报名信息
+router.get("/getInfo", (req, res, next) => {
+    User.findOne({userName: req.param("userName")}, (err1, doc1) => {
+        if (err1) {
+            res.json({
+                status: "1",
+                msg: err1.message
+            })
+        } else {
+            if (doc1) {
+                res.json({
+                    status: '0',
+                    msg: '',
+                    result: {
+                        projects: doc1.projects
+                    }
+                });
+            }
+        }
+    })
+})
+//用户注册
+router.post("/register", (req, res, next) => {
+    var user = mongoose.model("User")
+    var platform = '622';
+    var r1 = Math.floor(Math.random() * 10);
+    var r2 = Math.floor(Math.random() * 10);
+    var sysDate = new Date().Format('yyyyMMddhhmmss')
+    var newUser = new user({
+        userId: platform + r1 + sysDate + r2,
+        userName: req.body.userName,
+        userPwd: req.body.userPwd,
+        auth: 0,
+        projects: [],
+        info: {
+            userName: req.body.userName,
+            name: '',
+            sex: '',
+            major: '',
+            classNum: '',
+            qqNum: '',
+            phoneNum: ''
+        }
+    })
+    newUser.save(function (err1, doc1) {
+        if (err1) {
+            res.json({
+                status: "1",
+                msg: err1.message
+            })
+        } else {
+            res.json({
+                status: '0',
+                msg: '',
+                result: 'suc'
+            })
+        }
+    })
+})
+//用户注册校验
+router.post("/cheackRegister", (req, res, next) => {
+    User.findOne({userName: req.body.userName}, (err1, doc1) => {
+        if (err1) {
+            res.json({
+                status: "1",
+                msg: err1.message
+            })
+        } else {
+            if (doc1) {
+                console.log(doc1)
+                res.json({
+                    status: '01',
+                    msg: '此学号已注册'
+                })
+            } else {
+                res.json({
+                    status: '00',
+                    msg: '此学号可用'
+                })
+            }
+        }
+    })
 })
 //登入
 router.post("/login", function (req, res, next) {
@@ -180,7 +255,7 @@ router.get("/getProjects", (req, res, next) => {
 
 })
 //学生报名某项目
-router.post("/submit", (req, res, next) => {
+router.post("/signUp", (req, res, next) => {
     try {
         User.findOne({userName: req.body.userName}, (err1, doc1) => {
             if (err1) {
@@ -190,15 +265,15 @@ router.post("/submit", (req, res, next) => {
                 })
             } else {
                 if (doc1) {
-                    var createDate = new Date().Format('yyyy-MM-dd');
+                    let createDate = new Date().Format('yyyy-MM-dd');
                     let projects1 = {
                         projectId: req.body.projectId,
                         sigInTime: createDate,
                         projectName: req.body.projectName,
-                        checked: "未审核"
+                        checked: "未审核",
+                        projectContent:content
                     }
                     doc1.projects.push(projects1)
-
                     doc1.save((err2, doc2) => {
                         if (err2) {
                             res.json({
@@ -220,27 +295,6 @@ router.post("/submit", (req, res, next) => {
         console.log(err)
     }
 })
-//学生获取报名信息
-router.get("/getInfo", (req, res, next) => {
-    User.findOne({userName: req.param("userName")}, (err1, doc1) => {
-        if (err1) {
-            res.json({
-                status: "1",
-                msg: err1.message
-            })
-        } else {
-            if (doc1) {
-                res.json({
-                    status: '0',
-                    msg: '',
-                    result: {
-                        projects: doc1.projects
-                    }
-                });
-            }
-        }
-    })
-})
 //登入拦截
 router.get("/checkLogin", function (req, res, next) {
     if (req.cookies.userId) {
@@ -260,8 +314,6 @@ router.get("/checkLogin", function (req, res, next) {
         });
     }
 });
-
-
 router.post("/logout", function (req, res, next) {
     res.cookie("userId", "", {
         path: "/",

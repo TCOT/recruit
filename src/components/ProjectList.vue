@@ -1,7 +1,8 @@
 <template>
-    <div style="padding-right: 250px;padding-top: 30px;padding-left: 30px">
-        <el-card class="box-card" style="text-align: left">
+    <div style="padding-right: 250px">
+        <el-card class="aProjectList" v-loading="loading">
             <el-table :data="projects"
+                      class="aProjectTable"
                       style="width: 100%">
                 <el-table-column
                         label="项目名称" width="180">
@@ -24,14 +25,15 @@
                 <el-table-column
                         label="已报名人数">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.projectName }}</span>
+                        <span>{{ scope.row.stuNum }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
                         prop="address" label="操作">
                     <template slot-scope="scope">
-                        <el-button type="primary" plain icon="el-icon-message"
-                                   @click="toDetail(scope.$index,scope.row)">查看详情
+                        <el-button type="primary" round icon="el-icon-message"
+                                   size="medium"
+                                   @click="toDetail(scope.$index,scope.row)">详情
                         </el-button>
                     </template>
                 </el-table-column>
@@ -49,45 +51,46 @@
         },
         methods: {
             init() {
+                this.loading = true
                 axios.get("projects/getAProjects", {}).then((response) => {
                     var res = response.data;
-                    console.log(res.result.list)
                     if (res.status == "0") {
                         this.projects = res.result.list;
                     }
                 })
+                this.loading = false
             },
             toDetail(index, row) {
-                // alert(index)
-                // alert(this.projects[index].projectId)
-                this.$store.commit("updateSelection", 4)
-                var param = {
+                let param = {
                     projectId : this.projects[index].projectId
                 }
-                axios.get('/projects/getContent', {
+                axios.get('projects/getContent', {
                     params:param
                 }).then((response) => {
-                    var res = response.data;
-                    console.log(res)
+                    let res = response.data;
                     if (res.status == "0") {
-                        this.$store.commit("updateProject", res.result.project)
+                        this.$router.push('/aindex/project/' + this.projects[index].projectId)
                     }
                 })
             }
         },
         data() {
             return {
-                projects: []
+                projects: [],
+                loading:true
             }
         }
     }
 </script>
 
 <style>
-    .el-tabs__item{
-        font-size: 16px;
-    }
-    .el-card__body   {
+    .aProjectTable{
         text-align: left;
+    }
+    .aProjectList{
+        width: 800px;
+        height: 400px;
+        margin-top: 100px;
+        margin-left: 70px;
     }
 </style>
