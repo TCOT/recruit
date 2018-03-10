@@ -1,11 +1,15 @@
 <template>
     <div class="index">
-        <a-header></a-header>
-        <div class="amain">
-            <a-menu></a-menu>
-            <router-view></router-view>
+        <div style="min-height: calc(100vh - 50px);">
+            <a-header></a-header>
+            <div class="amain">
+                <a-menu></a-menu>
+                <router-view></router-view>
+            </div>
         </div>
+        <a-footer></a-footer>
     </div>
+
 </template>
 
 <script>
@@ -13,21 +17,23 @@
     import AMenu from '../components/AMenu'
     import ProjectList from './../components/ProjectList'
     import Publish from './../components/Publish'
+    import AFooter from '../components/AFooter'
+
     export default {
         components: {
             AHeader,
             AMenu,
             ProjectList,
-            Publish
+            Publish,
+            AFooter
         },
-        computed: {
-        }
+        computed: {}
     }
 
 </script>
 
 <style>
-    .amain{
+    .amain {
         display: flex;
         position: relative;
         box-align: start;
@@ -36,6 +42,7 @@
         padding: 0 16px;
         margin: 10px auto;
     }
+
     .el-main {
         padding-top: 50px;
     }

@@ -15,6 +15,27 @@ mongoose.connection.on("error", function () {
 mongoose.connection.on("disconnected", function () {
     console.log("MongoDB connected disconnected.")
 });
+//列表拒绝某个学生
+router.post("/listRefuseSomeone", (req, res, next) => {
+    Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
+        {
+            '$set': {
+                'students.$.checked': '已拒绝'
+            }
+        }, (err) => {
+        })
+    User.update({'userName': req.body.userName, 'projects.projectId': req.body.projectId},
+        {
+            '$set': {
+                'projects.$.checked': '已拒绝'
+            }
+        }, (err) => {
+        })
+    res.json({
+        status: '0',
+        msg: 'suc'
+    })
+})
 //列表通过某个学生
 router.post("/listPassSomeone", (req, res, next) => {
     Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
@@ -58,51 +79,36 @@ router.post("/passSomeone", (req, res, next) => {
     })
 })
 //教师端获取一个未审核的学生
-router.get("/getNoCheckedUser", (req, res, next) => {
+router.get("/getNoCheckedUser", async (req, res, next) => {
     try {
-        Project.findOne({projectId: req.param("projectId")}, (err1, doc1) => {
-            if (err1) {
-                res.json({
-                    status: "1",
-                    msg: err1.message
-                })
-            } else {
-                if (doc1) {
-                    let content = ''
-                    for (i = 0; i < doc1.students.length; i++) {
-                        if (doc1.students[i].checked == "未审核") {
-                            User.findOne({userName: doc1.students[i].studentUserName}, (e2, user) => {
-                                if (e2) {
-                                    res.json({
-                                        status: "1",
-                                        msg: e2.message
-                                    })
-                                } else {
-                                    for (i = 0; i < user.projects.length; i++) {
-                                        if (user.projects[i].projectId == req.param("projectId")) {
-                                            content = user.projects[i].signUpContent
-                                            res.json({
-                                                status: '0',
-                                                msg: '',
-                                                result: {
-                                                    noCheckedUser: user.info,
-                                                    noCheckedUserSignUpContent: content
-                                                }
-                                            });
-                                            break
-                                        }
-                                    }
-                                }
-                            })
-                            break
-                        }
+        let project = await Project.findOne({projectId: req.param("projectId")})
+        let content = ''
+        for (let student of project.students) {
+            if (student.checked == "未审核") {
+                let user = await User.findOne({userName: student.studentUserName})
+                for (let sproject of user.projects) {
+                    if (sproject.projectId == req.param("projectId")) {
+                        content = sproject.signUpContent
+                        res.json({
+                            status: '0',
+                            msg: '',
+                            result: {
+                                noCheckedUser: user.info,
+                                noCheckedUserSignUpContent: content
+                            }
+                        });
+                        break
                     }
-
                 }
+                break
             }
-        })
-    } catch (e) {
-        console.log(e)
+        }
+        res.json({
+            status: '1',
+            msg: '所有人均通过'
+        });
+    } catch (err) {
+        res.json({status: "1", msg: err.message});
     }
 })
 //获取具体项目报名学生列表
@@ -112,10 +118,13 @@ router.get("/getStudentsList", async (req, res, next) => {
         let signUpStudents = []
         for (const student of project.students) {
             let user = await User.findOne({userName: student.studentUserName})
-            user.info.status = student.checked
-            signUpStudents.push(user.info)
+                user.info.status = student.checked
+                signUpStudents.push(user.info)
         }
-        res.json({status: "0", msg: 'suc', result: {students: signUpStudents}});
+        res.json({status: "0", msg: 'suc', result: {
+            students: signUpStudents,
+            total:project.stuNum
+        }});
     } catch (err) {
         res.json({status: "1", msg: err.message});
     }

@@ -5,6 +5,11 @@
             <s-menu></s-menu>
             <router-view></router-view>
         </div>
+        <a-footer style="position: fixed;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: 0 auto;"></a-footer>
     </div>
 </template>
 
@@ -15,6 +20,7 @@
     import SMenu from './../components/SMenu'
     import SProjects from './../components/SProjects'
     import JoinInfo from './../components/JoinInfo'
+    import AFooter from '../components/AFooter'
 
     export default {
         components: {
@@ -23,7 +29,8 @@
             SProjects,
             SInfo,
             Details,
-            JoinInfo
+            JoinInfo,
+            AFooter
         },
         mounted(){
             this.init()

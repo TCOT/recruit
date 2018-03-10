@@ -58,11 +58,17 @@
                 </el-tabs>
             </el-card>
         </div>
+        <a-footer style="position: fixed;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: 0 auto;"></a-footer>
     </div>
 
 </template>
 
 <script>
+    import AFooter from '../components/AFooter'
     import axios from 'axios'
 
     export default {
@@ -239,6 +245,9 @@
                     }
                 });
             }
+        },
+        components:{
+            AFooter
         }
     }
 </script>

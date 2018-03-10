@@ -46,7 +46,7 @@
 <style >
     .el-col-12{
         width: 100%;
-        margin-top: 150px;
+        margin-top: 130px;
 
     }
 </style>
