@@ -13,7 +13,12 @@
                 </el-card>
             </el-tab-pane>
             <el-tab-pane label="报名人员" name="second">
-                <el-table class="studentsList" :data="students"
+                <div v-if="this.detailFlag == false">
+                <el-table class="studentsList" :data="filterData"
+
+                          @cell-click="cellClick"
+                          @filter-change="filterChange"
+                          clearFilter
                           v-loading="loading">
                     <el-table-column
                             prop="userName"
@@ -32,7 +37,7 @@
                                 <p>QQ号: {{ scope.row.qqNum }}</p>
                                 <div slot="reference" class="name-wrapper">
                                     <el-tag size="medium">{{ scope.row.name }}</el-tag>
-                                </div>
+                                </div>  
                             </el-popover>
                         </template>
                     </el-table-column>
@@ -49,7 +54,8 @@
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column label="状态"
+                    <el-table-column    column-key="status"
+                            label="状态"
                                      prop="status"
                                      :filters="[{ text: '未审核', value: '未审核' }, { text: '已通过',
                                      value:'已通过'},{text:'已拒绝',value:'已拒绝'}]"
@@ -69,6 +75,84 @@
                             layout="total,prev, pager, next"
                             :total="total">
                     </el-pagination>
+                </div>
+                </div>
+                <div v-if="this.detailFlag == true">
+                    <div class="noCheckedWrapper"
+                         v-loading="loading"
+                         style="margin-bottom: 250px">
+                        <el-card style="flex-wrap: wrap;margin: 5px 10px 5px 10px;padding: 0px">
+                            <div style="display: flex;width:660px;justify-content: space-between ">
+                                <div style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
+                                    姓名：{{stuDetailInfo.name}}
+                                </div>
+                                <div style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
+                                    学号：{{stuDetailInfo.userName}}
+                                </div>
+                            </div>
+                            <div style="display: flex;width:660px;justify-content: space-between ">
+                                <div style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
+                                    性别：{{stuDetailInfo.sex}}
+                                </div>
+                                <div style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
+                                    专业：{{stuDetailInfo.major}}
+                                </div>
+                            </div>
+                            <div style="display: flex;width:660px;justify-content: space-between ">
+                                <div style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
+                                    班级：{{stuDetailInfo.classNum}}
+                                </div>
+                                <div style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
+                                    QQ号码：{{stuDetailInfo.qqNum}}
+                                </div>
+                            </div>
+                            <div style="display: flex;width:660px;justify-content: space-between ">
+                                <div style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
+                                    手机号码：{{stuDetailInfo.phoneNum}}
+                                </div>
+                                <div
+                                        style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
+                                    审核情况:<el-tag style="margin-left: 10px;"
+                                                 :type="stuDetailInfo.status == '未审核'?'info':
+                            ( stuDetailInfo.status=='已通过'?'success':'danger')  ">{{stuDetailInfo.status}}
+                                </el-tag>
+                                </div>
+
+                            </div>
+
+                        </el-card>
+                        <el-card style="flex-wrap: wrap;margin: 5px 10px 5px 10px;padding: 0px">
+                            <div style="text-align: left">
+                                <div v-html='stuDetailInfo.signUpContent'></div>
+                            </div>
+                        </el-card>
+                        <div>
+                            <div style="text-align: left;margin: 10px 0 10px 10px">
+                        <span>
+                            备注信息：
+                        </span>
+                            </div>
+                            <div >
+                                <quill-editor style="margin-left: 10px;margin-right: 9px;"
+                                              ref="myTextEditor"
+                                              v-model="stuDetailInfo.remarks"
+                                              :options="editorOption"
+                                              @blur="onEditorBlur($event)">
+                                </quill-editor>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;display: flex;margin-left: 10px">
+                            <el-button type="success"
+                                       size="medium"
+                                       @click="pass">通过
+                            </el-button>
+                            <el-button
+                                    size="medium"
+                                    type="danger"
+                                    @click="">拒绝
+                            </el-button>
+                        </div>
+                    </div>
                 </div>
             </el-tab-pane>
             <el-tab-pane label="未审核" name="third">
@@ -121,7 +205,7 @@
                         <div >
                             <quill-editor style="margin-left: 10px;margin-right: 9px;"
                                     ref="myTextEditor"
-                                    v-model="projectContent"
+                                    v-model="checkRemark"
                                     :options="editorOption"
                                     @blur="onEditorBlur($event)"
                                     @focus="onEditorFocus($event)"
@@ -141,13 +225,10 @@
                         </el-button>
                     </div>
                 </div>
-                <div v-else-if="allstudentsChecked == true" style="margin-top: 135px;">
+                <div v-else-if="allstudentsChecked == true" style="margin-left:300px;
+                margin-top:135px;">
                     <i class="el-icon-success" style="margin-right: 5px"></i>所有人均已审核
                 </div>
-            </el-tab-pane>
-            <el-tab-pane label="已通过" name="fourth">
-            </el-tab-pane>
-            <el-tab-pane label="已拒绝" name="fifth">
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -159,6 +240,7 @@
     export default {
         data() {
             return {
+                filters: {},
                 reamrk: '',
                 projectName: '',
                 projectContent: '',
@@ -170,19 +252,75 @@
                 total: 0,
                 page: 0,
                 iconloading: false,
-                checkedFlag: 0
+                checkedFlag: 0,
+                thePageStudents:[],
+                theFilterStudents:[],
+                filteFlag:false,
+                detailFlag:false,
+                stuDetailInfo:{},
+                remark:'',
+                checkRemark:''
             }
         },
         mounted() {
             this.init()
         },
+        computed: {
+            filterData() {
+                let data = this.students
+                Object.keys(this.filters).forEach(key => {
+                    let values = this.filters[key]
+                    if (values.length) {
+                        data = data.filter(row => values.includes(row[key]))
+                    }
+                })
+                this.total = data.length
+                data = data.slice( (this.page-1)*5, this.page*5 )
+                return data
+            }
+        },
         methods: {
-            filterTag(value){
-                return row.status === value;
+            onEditorBlur(){
+                axios.post("/projects/editRemark", {
+                    userName: this.stuDetailInfo.userName,
+                    projectId: this.$route.params.projectId,
+                    remarks : this.stuDetailInfo.remarks
+                }).then((response) => {
+                    let res = response.data
+                    if (res.status == '0') {
+                        this.$message({
+                            type: 'success',
+                            message: '保存备注成功',
+                            duration: 1000,
+                            center: true
+                        });
+                    }
+                })
+            },
+            cellClick(row, column, cell, event){
+              if(column.property == 'name'){
+                  this.detailFlag = true
+                  this.loading = true
+                  axios.get("/projects/getStuDetailInfo", {
+                      params: {
+                          projectId: this.$route.params.projectId,
+                          userName:row.userName
+                      }
+                  }).then((response) => {
+                      var res = response.data;
+                      if (res.status == "0") {
+                          this.stuDetailInfo = res.result.userInfo;
+                          this.loading = false
+                      }
+                  })
+
+              }
+            },
+            filterChange(filters){
+                this.filters = filters
             },
             handleCurrentChange(page) {
                 this.page = page
-
             },
             handleRefuse(index, row) {
                 this.$confirm('确定拒绝此同学吗?', '提示', {
@@ -197,19 +335,19 @@
                         center: true
                     });
                 }).then(()=>{
-                    this.students[index].status = '已拒绝'
+                    row.status = '已拒绝'
                 }).then(()=>{
                     axios.post("/projects/listRefuseSomeone", {
-                        userName: this.students[index].userName,
+                        userName: row.userName,
                         projectId: this.$route.params.projectId
                     })
                 })
 
             },
             handlePass(index, row) {
-                this.students[index].status = '已通过'
+                row.status = '已通过'
                 axios.post("/projects/listPassSomeone", {
-                    userName: this.students[index].userName,
+                    userName: row.userName,
                     projectId: this.$route.params.projectId
                 }).then((response) => {
                     let res = response.data;
@@ -226,14 +364,15 @@
             pass() {
                 axios.post("/projects/passSomeone", {
                     userName: this.noCheckedUserInfo.userName,
-                    projectId: this.$route.params.projectId
+                    projectId: this.$route.params.projectId,
+                    checkRemark : this.checkRemark
                 }).then((response) => {
                     let res = response.data
                     if (res.status == '0') {
                         this.loading = true
                         axios.get("/projects/getNoCheckedUser", {
                             params: {
-                                projectId: this.$route.params.projectId
+                                projectId: this.$route.params.projectId,
                             }
                         }).then((response) => {
                             var res = response.data;
@@ -285,6 +424,7 @@
                     })
                 }
                 if (tab.name == "second") {
+                    this.detailFlag = false
                     this.loading = true
                     let param = {
                         projectId: this.$route.params.projectId,
@@ -296,7 +436,7 @@
                         if (res.status == "0") {
                             this.students = res.result.students;
                             this.total = res.result.total
-                            this.handleCurrentChange(1)
+                            this.handleCurrentChange(1,this.students)
                         }
                         this.loading = false
                     })
@@ -319,8 +459,6 @@
                             this.allstudentsChecked = true
                             this.loading = false
                         }
-
-
                     })
                 }
             }

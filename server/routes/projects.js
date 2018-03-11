@@ -15,6 +15,84 @@ mongoose.connection.on("error", function () {
 mongoose.connection.on("disconnected", function () {
     console.log("MongoDB connected disconnected.")
 });
+//自动保存备注
+router.post("/editRemark", async (req, res, next) => {
+    try {
+        Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
+            {
+                '$set': {
+                    'students.$.remarks': req.param("remarks")
+                }
+            }, (err) => {
+            })
+        res.json({
+            status: '0',
+            msg: ''
+        })
+    } catch (err) {
+        console.log(err)
+        res.json({status: "1", msg: err.message});
+    }
+})
+//获得一个学生详细信息
+router.get("/getStuDetailInfo", async (req, res, next) => {
+    try {
+        let project = await Project.findOne({projectId: req.param("projectId")})
+        let user = await User.findOne({userName: req.param("userName")})
+        for (let student of project.students) {
+            if (student.studentUserName == req.param("userName")) {
+                console.log(student)
+                user.info.remarks = student.remarks
+                user.info.signUpContent = student.signUpContent
+                user.info.status = student.checked
+                break
+            }
+        }
+        console.log(user.info)
+        res.json({
+            status: '0',
+            msg: '',
+            result: {
+                userInfo: user.info
+            }
+        });
+    } catch (err) {
+        res.json({status: "1", msg: err.message});
+    }
+})
+//教师端获取一个未审核的学生
+router.get("/getNoCheckedUser", async (req, res, next) => {
+    try {
+        let project = await Project.findOne({projectId: req.param("projectId")})
+        let content = ''
+        for (let student of project.students) {
+            if (student.checked == "未审核") {
+                let user = await User.findOne({userName: student.studentUserName})
+                for (let sproject of user.projects) {
+                    if (sproject.projectId == req.param("projectId")) {
+                        content = sproject.signUpContent
+                        res.json({
+                            status: '0',
+                            msg: '',
+                            result: {
+                                noCheckedUser: user.info,
+                                noCheckedUserSignUpContent: content
+                            }
+                        });
+                        break
+                    }
+                }
+                break
+            }
+        }
+        res.json({
+            status: '1',
+            msg: '所有人均通过'
+        });
+    } catch (err) {
+        res.json({status: "1", msg: err.message});
+    }
+})
 //列表拒绝某个学生
 router.post("/listRefuseSomeone", (req, res, next) => {
     Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
@@ -62,7 +140,8 @@ router.post("/passSomeone", (req, res, next) => {
     Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
         {
             '$set': {
-                'students.$.checked': '已通过'
+                'students.$.checked': '已通过',
+                'students.$.remarks': req.body.checkRemark
             }
         }, (err) => {
         })
@@ -78,39 +157,6 @@ router.post("/passSomeone", (req, res, next) => {
         msg: 'suc'
     })
 })
-//教师端获取一个未审核的学生
-router.get("/getNoCheckedUser", async (req, res, next) => {
-    try {
-        let project = await Project.findOne({projectId: req.param("projectId")})
-        let content = ''
-        for (let student of project.students) {
-            if (student.checked == "未审核") {
-                let user = await User.findOne({userName: student.studentUserName})
-                for (let sproject of user.projects) {
-                    if (sproject.projectId == req.param("projectId")) {
-                        content = sproject.signUpContent
-                        res.json({
-                            status: '0',
-                            msg: '',
-                            result: {
-                                noCheckedUser: user.info,
-                                noCheckedUserSignUpContent: content
-                            }
-                        });
-                        break
-                    }
-                }
-                break
-            }
-        }
-        res.json({
-            status: '1',
-            msg: '所有人均通过'
-        });
-    } catch (err) {
-        res.json({status: "1", msg: err.message});
-    }
-})
 //获取具体项目报名学生列表
 router.get("/getStudentsList", async (req, res, next) => {
     try {
@@ -118,13 +164,15 @@ router.get("/getStudentsList", async (req, res, next) => {
         let signUpStudents = []
         for (const student of project.students) {
             let user = await User.findOne({userName: student.studentUserName})
-                user.info.status = student.checked
-                signUpStudents.push(user.info)
+            user.info.status = student.checked
+            signUpStudents.push(user.info)
         }
-        res.json({status: "0", msg: 'suc', result: {
-            students: signUpStudents,
-            total:project.stuNum
-        }});
+        res.json({
+            status: "0", msg: 'suc', result: {
+                students: signUpStudents,
+                total: project.stuNum
+            }
+        });
     } catch (err) {
         res.json({status: "1", msg: err.message});
     }
@@ -233,7 +281,7 @@ router.post("/signUp", (req, res, next) => {
                             doc2.save()
                             var info = {
                                 studentUserName: doc2.userName,
-                                signUpcontent: req.body.content,
+                                signUpContent: req.body.content,
                                 checked: '未审核',
                                 studentName: doc2.info.name,
                                 remarks: ''
