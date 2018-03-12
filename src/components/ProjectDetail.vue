@@ -1,5 +1,5 @@
 <template>
-    <div class="pDetailContent" >
+    <div class="pDetailContent">
         <el-tabs value="first" @tab-click="handleClick">
             <el-tab-pane label="项目内容" name="first">
                 <el-card class="projectContent" style="margin: 5px 10px 5px 10px"
@@ -14,68 +14,80 @@
             </el-tab-pane>
             <el-tab-pane label="报名人员" name="second">
                 <div v-if="this.detailFlag == false">
-                <el-table class="studentsList" :data="filterData"
-
-                          @cell-click="cellClick"
-                          @filter-change="filterChange"
-                          clearFilter
-                          v-loading="loading">
-                    <el-table-column
-                            prop="userName"
-                            label="学号"
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        <template slot-scope="scope">
-                            <el-popover trigger="hover" placement="top">
-                                <p>专业: {{ scope.row.major }}</p>
-                                <p>班级: {{ scope.row.classNum }}</p>
-                                <p>性别: {{ scope.row.sex }}</p>
-                                <p>QQ号: {{ scope.row.qqNum }}</p>
-                                <div slot="reference" class="name-wrapper">
-                                    <el-tag size="medium">{{ scope.row.name }}</el-tag>
-                                </div>  
-                            </el-popover>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="220" row-click="rowClick">
-                        <template slot-scope="scope">
-                            <el-button type="success"
-                                       size="mini"
-                                       @click="handlePass(scope.$index, scope.row)">通过
-                            </el-button>
-                            <el-button
-                                    size="mini"
-                                    type="danger"
-                                    @click="handleRefuse(scope.$index, scope.row)">拒绝
-                            </el-button>
-                        </template>
-                    </el-table-column>
-                    <el-table-column    column-key="status"
-                            label="状态"
-                                     prop="status"
-                                     :filters="[{ text: '未审核', value: '未审核' }, { text: '已通过',
+                    <el-table class="studentsList" :data="filterData"
+                              @sort-change="sortChange"
+                              @cell-click="cellClick"
+                              @filter-change="filterChange"
+                              clearFilter
+                              v-loading="loading">
+                        <el-table-column
+                                prop="userName"
+                                label="学号"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="name"
+                                label="姓名"
+                                width="180">
+                            <template slot-scope="scope">
+                                <el-popover trigger="hover" placement="top">
+                                    <p>专业: {{ scope.row.major }}</p>
+                                    <p>班级: {{ scope.row.classNum }}</p>
+                                    <p>性别: {{ scope.row.sex }}</p>
+                                    <p>QQ号: {{ scope.row.qqNum }}</p>
+                                    <div slot="reference" class="name-wrapper">
+                                        <el-tag size="medium" class="tagDetail">{{ scope.row.name
+                                            }}
+                                        </el-tag>
+                                    </div>
+                                </el-popover>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="220" row-click="rowClick">
+                            <template slot-scope="scope">
+                                <el-button type="success"
+                                           size="mini"
+                                           @click="handlePass(scope.$index, scope.row)">通过
+                                </el-button>
+                                <el-button
+                                        size="mini"
+                                        type="danger"
+                                        @click="handleRefuse(scope.$index, scope.row)">拒绝
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                        <el-table-column column-key="status"
+                                         label="状态"
+                                         prop="status"
+                                         :filters="[{ text: '未审核', value: '未审核' }, { text: '已通过',
                                      value:'已通过'},{text:'已拒绝',value:'已拒绝'}]"
-                                     :filter-method="filterTag">
-                        <template slot-scope="scope">
-                            <el-tag :type="scope.row.status == '未审核'?'info':
+                                         :filter-method="filterTag">
+                            <template slot-scope="scope">
+                                <el-tag :type="scope.row.status == '未审核'?'info':
                             ( scope.row.status=='已通过'?'success':'danger')  ">{{scope.row.status}}
-                            </el-tag>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <div class="block" style="margin-top: 10px">
-                    <el-pagination
-                            background
-                            page-size="5"
-                            @current-change="handleCurrentChange"
-                            layout="total,prev, pager, next"
-                            :total="total">
-                    </el-pagination>
-                </div>
+                                </el-tag>
+                            </template>
+                        </el-table-column>
+                        <el-table-column column-key="rate"
+                                         label="评分" width="150" prop="rate" align="right" sortable="custom">
+                            <template slot-scope="scope">
+                                <el-rate
+                                        @change="listRateChange(scope.$index, scope.row)"
+                                        v-model="scope.row.rate"
+                                        :colors="['#99A9BF', '#F7BA2A', '#FF9900']">
+                                </el-rate>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="block" style="margin-top: 10px">
+                        <el-pagination
+                                background
+                                page-size="5"
+                                @current-change="handleCurrentChange"
+                                layout="total,prev, pager, next"
+                                :total="total">
+                        </el-pagination>
+                    </div>
                 </div>
                 <div v-if="this.detailFlag == true">
                     <div class="noCheckedWrapper"
@@ -112,10 +124,12 @@
                                 </div>
                                 <div
                                         style="width: 330px;display: flex;margin-bottom: 20px;align-items: center;">
-                                    审核情况:<el-tag style="margin-left: 10px;"
-                                                 :type="stuDetailInfo.status == '未审核'?'info':
-                            ( stuDetailInfo.status=='已通过'?'success':'danger')  ">{{stuDetailInfo.status}}
-                                </el-tag>
+                                    审核情况:
+                                    <el-tag style="margin-left: 10px;"
+                                            :type="stuDetailInfo.status == '未审核'?'info':
+                            ( stuDetailInfo.status=='已通过'?'success':'danger')  ">
+                                        {{stuDetailInfo.status}}
+                                    </el-tag>
                                 </div>
 
                             </div>
@@ -127,30 +141,59 @@
                             </div>
                         </el-card>
                         <div>
-                            <div style="text-align: left;margin: 10px 0 10px 10px">
-                        <span>
-                            备注信息：
-                        </span>
+                            <div style="text-align: left;height: 35px;display: flex;align-items: center;margin-left: 10px;margin-top: 15px;margin-bottom: 10px">
+                                <div style="width: 190px;align-items: center;display: flex;">
+                                    <span>
+                                    备注信息：
+                                    </span>
+                                    <el-tag :type="last == true?'':'success' "
+                                            v-if=" first == true ">{{saveInfo}}
+                                    </el-tag>
+                                </div>
+                                <div style="display: flex;align-items: center;margin-left: 10px;">
+                                    <span style="margin-right: 5px">评分  </span>
+                                    <el-rate
+                                            show-text
+                                            @change="rateChange"
+                                            v-model="stuDetailInfo.rate"
+                                            :colors="['#99A9BF', '#F7BA2A', '#FF9900']">
+                                    </el-rate>
+                                </div>
                             </div>
-                            <div >
-                                <quill-editor style="margin-left: 10px;margin-right: 9px;"
+                            <div>
+                                <quill-editor style="margin-left: 10px;margin-right: 9px;
+                                                 "
                                               ref="myTextEditor"
                                               v-model="stuDetailInfo.remarks"
                                               :options="editorOption"
-                                              @blur="onEditorBlur($event)">
+                                              @change="onEditorChange($event)">
                                 </quill-editor>
                             </div>
                         </div>
                         <div style="margin-top: 15px;display: flex;margin-left: 10px">
-                            <el-button type="success"
+                            <el-button v-if="stuDetailInfo.status !=='已通过'"
+                                       type="success"
                                        size="medium"
-                                       @click="pass">通过
+                                       @click="stuDetailPass">通过
+                            </el-button>
+                            <el-button type="success" icon='el-icon-circle-check-outline'
+                                       v-if="stuDetailInfo.status =='已通过'" disabled>
+                                已通过
                             </el-button>
                             <el-button
+                                    v-if="stuDetailInfo.status !=='已拒绝'"
                                     size="medium"
                                     type="danger"
-                                    @click="">拒绝
+                                    @click="stuDetailRefuse">拒绝
                             </el-button>
+                            <el-button icon='el-icon-circle-close-outline'
+                                       type="danger" v-if="stuDetailInfo.status =='已拒绝'"
+                                       disabled>
+                                已拒绝
+                            </el-button>
+                            <el-button type="primary" icon="el-icon-more" @click="getNextStu">下一位
+                            </el-button>
+                            <el-button type="primary" @click="toStuList">返回列表</el-button>
                         </div>
                     </div>
                 </div>
@@ -158,7 +201,7 @@
             <el-tab-pane label="未审核" name="third">
                 <div v-if="allstudentsChecked == false" class="noCheckedWrapper"
                      v-loading="loading"
-                style="margin-bottom: 250px">
+                     style="margin-bottom: 250px">
                     <el-card style="flex-wrap: wrap;margin: 5px 10px 5px 10px;padding: 0px">
                         <div style="display: flex;width:660px;justify-content: space-between ">
                             <div style="width: 330px;display: flex;margin-bottom: 20px">
@@ -202,14 +245,14 @@
                             备注信息：
                         </span>
                         </div>
-                        <div >
+                        <div>
                             <quill-editor style="margin-left: 10px;margin-right: 9px;"
-                                    ref="myTextEditor"
-                                    v-model="checkRemark"
-                                    :options="editorOption"
-                                    @blur="onEditorBlur($event)"
-                                    @focus="onEditorFocus($event)"
-                                    @ready="onEditorReady($event)">
+                                          ref="myTextEditor"
+                                          v-model="checkRemark"
+                                          :options="editorOption"
+                                          @blur="onEditorBlur($event)"
+                                          @focus="onEditorFocus($event)"
+                                          @ready="onEditorReady($event)">
                             </quill-editor>
                         </div>
                     </div>
@@ -253,13 +296,19 @@
                 page: 0,
                 iconloading: false,
                 checkedFlag: 0,
-                thePageStudents:[],
-                theFilterStudents:[],
-                filteFlag:false,
-                detailFlag:false,
-                stuDetailInfo:{},
-                remark:'',
-                checkRemark:''
+                thePageStudents: [],
+                theFilterStudents: [],
+                filteFlag: false,
+                detailFlag: false,
+                stuDetailInfo: {},
+                remark: '',
+                checkRemark: '',
+                saveStatus: false,
+                last: false,
+                saveInfo: '',
+                first: false,
+                nextData: [],
+                order: ''
             }
         },
         mounted() {
@@ -275,48 +324,178 @@
                     }
                 })
                 this.total = data.length
-                data = data.slice( (this.page-1)*5, this.page*5 )
+                this.nextData = data
+                if (this.order == 'ascending') {
+                    data.sort(this.sortRateAsc)
+                }
+                if (this.order == 'descending') {
+                    data.sort(this.sortRateDes)
+                }
+                console.log(data)
+                data = data.slice((this.page - 1) * 5, this.page * 5)
+                console.log(data)
                 return data
             }
         },
         methods: {
-            onEditorBlur(){
-                axios.post("/projects/editRemark", {
+            //升序
+            sortRateAsc(a, b) {
+                return a.rate - b.rate
+            },
+            //降序
+            sortRateDes(a, b) {
+                return b.rate - a.rate
+            },
+            sortChange({column, prop, order}) {
+                this.order = order
+            },
+            listRateChange(index, row) {
+                this.$message({
+                    type: 'success',
+                    message: '评分成功',
+                    duration: 1000,
+                    center: true
+                })
+                axios.post("/projects/rateChange", {
+                    userName: row.userName,
+                    projectId: this.$route.params.projectId,
+                    rate: row.rate
+                }).then((response) => {
+                    let res = response.data
+                    if (res.status == '0') {
+                    }
+                })
+            },
+            rateChange(rate) {
+                this.$message({
+                    type: 'success',
+                    message: '评分成功',
+                    duration: 1000,
+                    center: true
+                })
+                axios.post("/projects/rateChange", {
                     userName: this.stuDetailInfo.userName,
                     projectId: this.$route.params.projectId,
-                    remarks : this.stuDetailInfo.remarks
+                    rate: rate
+                }).then((response) => {
+                    let res = response.data
+                    if (res.status == '0') {
+                        this.stuDetailInfo.rate = rate
+                    }
+                })
+            },
+            toStuList() {
+                this.detailFlag = false
+            },
+            getNextStu() {
+                this.loading = true
+                let nextIndex
+                this.nextData.forEach((item, index) => {
+                    if (item.userName == this.stuDetailInfo.userName) {
+                        nextIndex = index + 1
+                    }
+                })
+                if (nextIndex == this.nextData.length) {
+                    nextIndex = 0
+                }
+                axios.get("/projects/getStuDetailInfo", {
+                    params: {
+                        projectId: this.$route.params.projectId,
+                        userName: this.nextData[nextIndex].userName
+                    }
+                }).then((response) => {
+                    var res = response.data;
+                    if (res.status == "0") {
+                        this.stuDetailInfo = res.result.userInfo;
+                        this.loading = false
+                        this.$message({
+                            type: 'success',
+                            message: '已切换下一位同学',
+                            duration: 1000,
+                            center: true
+                        })
+                    }
+                })
+            },
+            stuDetailRefuse() {
+                axios.post("/projects/refuseSomeone", {
+                    userName: this.stuDetailInfo.userName,
+                    projectId: this.$route.params.projectId,
+                }).then((response) => {
+                    let res = response.data
+                    if (res.status == '0') {
+                        this.$message({
+                            type: 'warning',
+                            message: '拒绝此同学成功',
+                            duration: 1000,
+                            center: true
+                        })
+                        this.stuDetailInfo.status = '已拒绝'
+                    }
+                })
+            },
+            stuDetailPass() {
+                axios.post("/projects/passSomeone", {
+                    userName: this.stuDetailInfo.userName,
+                    projectId: this.$route.params.projectId,
                 }).then((response) => {
                     let res = response.data
                     if (res.status == '0') {
                         this.$message({
                             type: 'success',
-                            message: '保存备注成功',
+                            message: '通过此同学成功',
                             duration: 1000,
                             center: true
-                        });
+                        })
+                        this.stuDetailInfo.status = '已通过'
                     }
                 })
             },
-            cellClick(row, column, cell, event){
-              if(column.property == 'name'){
-                  this.detailFlag = true
-                  this.loading = true
-                  axios.get("/projects/getStuDetailInfo", {
-                      params: {
-                          projectId: this.$route.params.projectId,
-                          userName:row.userName
-                      }
-                  }).then((response) => {
-                      var res = response.data;
-                      if (res.status == "0") {
-                          this.stuDetailInfo = res.result.userInfo;
-                          this.loading = false
-                      }
-                  })
-
-              }
+            onEditorChange() {
+                axios.post("/projects/editRemark", {
+                    userName: this.stuDetailInfo.userName,
+                    projectId: this.$route.params.projectId,
+                    remarks: this.stuDetailInfo.remarks
+                }).then((response) => {
+                    this.first = true
+                    this.saveStatus = true
+                    this.last = false
+                    this.saveInfo = '保存成功'
+                    let res = response.data
+                    if (res.status == '0') {
+                        setTimeout(this.saveStatusToFalse, 5000)
+                    }
+                })
             },
-            filterChange(filters){
+            saveStatusToFalse() {
+                let date = new Date();
+                let hour = date.getHours();
+                let minute = date.getMinutes();
+                this.saveStatus = false
+                this.last = true
+                this.saveInfo = '最近保存 ' + hour + ':' + minute
+            },
+            cellClick(row, column, cell, event) {
+                this.first = false
+                if (column.property == 'name') {
+                    this.detailFlag = true
+                    this.loading = true
+                    axios.get("/projects/getStuDetailInfo", {
+                        params: {
+                            projectId: this.$route.params.projectId,
+                            userName: row.userName
+                        }
+                    }).then((response) => {
+                        var res = response.data;
+                        if (res.status == "0") {
+                            this.stuDetailInfo = res.result.userInfo;
+                            this.loading = false
+                        }
+                    })
+
+                }
+            },
+            filterChange(filters) {
                 this.filters = filters
             },
             handleCurrentChange(page) {
@@ -334,9 +513,9 @@
                         duration: 1000,
                         center: true
                     });
-                }).then(()=>{
+                }).then(() => {
                     row.status = '已拒绝'
-                }).then(()=>{
+                }).then(() => {
                     axios.post("/projects/listRefuseSomeone", {
                         userName: row.userName,
                         projectId: this.$route.params.projectId
@@ -365,7 +544,7 @@
                 axios.post("/projects/passSomeone", {
                     userName: this.noCheckedUserInfo.userName,
                     projectId: this.$route.params.projectId,
-                    checkRemark : this.checkRemark
+                    checkRemark: this.checkRemark
                 }).then((response) => {
                     let res = response.data
                     if (res.status == '0') {
@@ -436,7 +615,7 @@
                         if (res.status == "0") {
                             this.students = res.result.students;
                             this.total = res.result.total
-                            this.handleCurrentChange(1,this.students)
+                            this.handleCurrentChange(1, this.students)
                         }
                         this.loading = false
                     })
@@ -467,9 +646,22 @@
 </script>
 
 <style>
-    .ql-container.ql-snow{
+    .el-table td, .el-table th.is-leaf {
+        border-bottom: 0.1px solid #ebeef5;
+    }
+
+    .tagDetail {
+        cursor: pointer;
+    }
+
+    .el-notification {
+        width: 230px;
+    }
+
+    .ql-container.ql-snow {
         font-size: 16px;
     }
+
     .el-pagination {
         padding-right: 115px;
     }
@@ -487,7 +679,6 @@
     }
 
     .studentsList {
-        width: 700px;
         height: 338px;
     }
 

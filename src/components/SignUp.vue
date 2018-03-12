@@ -6,12 +6,12 @@
                     <span>{{projectName}}</span>
                 </div>
                 <div class="text item" >
-                    <div v-html='projectContent' style="text-align: left"></div>
+                    <div v-html='projectContent' style="text-align:left;"></div>
                 </div>
             </el-card>
             <el-button type="primary" icon="el-icon-edit-outline" style="margin-top: 30px;font-size: 16px;
                 display: inline-block;float: left;" @click="signUp">
-                我要报名
+                报名
             </el-button>
             <el-button type="primary" plain icon="el-icon-back" style="margin-top: 30px;font-size: 16px;
                     display: inline-block;float: left;;margin-left: 30px" @click="backToList">
@@ -19,19 +19,18 @@
             </el-button>
         </div>
         <div v-if="editflag == true">
-            <div class="editorWrapper">
+            <div class="editorWrapper" style="width: 850px">
                 <div class="quill-editor-example">
                     <p class="prompt-text" style="text-align: left"><span
                             class="prompt-icon">*</span>请填写报名信息：</p>
+                    <el-tag :type="last == true?'':'success' " v-if=" first == true ">{{saveInfo}}
+                    </el-tag>
                     <quill-editor
                             ref="myTextEditor"
                             v-model="signUpContent"
-                            :options="editorOption"
-                            @blur="onEditorBlur($event)"
-                            @focus="onEditorFocus($event)"
-                            @ready="onEditorReady($event)">
+                            @change="onEditorChange($event)">
                     </quill-editor>
-                    <div  class="html ql-editor" style="font-size: 13px;text-align: left"
+                    <div  class="html ql-editor" style="font-size: 16px;text-align: left"
                           v-html="signUpContent"></div>
                 </div>
                 <div style="float:left;margin-top: 10px">
@@ -53,13 +52,40 @@
                 projectContent: '',
                 editflag: false,
                 signUpContent: '',
-                loading: true
+                loading: true,
+                last: false,
+                first: false,
+                saveInfo: ''
             }
         },
         mounted() {
             this.init()
         },
         methods: {
+            saveStatusToFalse() {
+                let date = new Date();
+                let hour = date.getHours();
+                let minute = date.getMinutes();
+                this.saveStatus = false
+                this.last = true
+                this.saveInfo = '最近保存 ' + hour + ':' + minute
+            },
+            onEditorChange(){
+                axios.post("/users/signUpSave", {
+                    userName: this.$store.state.nickName,
+                    projectid: this.$route.params.id,
+                    signUpContent: this.signUpContent
+                }).then((response) => {
+                    this.first = true
+                    this.saveStatus = true
+                    this.last = false
+                    this.saveInfo = '保存成功'
+                    let res = response.data
+                    if (res.status == '0') {
+                        setTimeout(this.saveStatusToFalse, 5000)
+                    }
+                })
+            },
             init() {
                 let param = {
                     projectId: this.$route.params.id
@@ -112,6 +138,9 @@
 </script>
 
 <style>
+    .ql-container.ql-snow{
+        font-size: 16px;
+    }
     .el-card__body {
         padding: 10px 10px 0px 15px;
     }

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var User = require('./../models/user');
+var Project = require('./../models/project');
 require('./../util/util')
 
 //连接MongoDB数据库
@@ -25,7 +26,60 @@ router.get('/', function (req, res, next) {
 });
 
 module.exports = router;
-
+//用户填写报名信息时的自动保存
+router.post("/signUpSave", async (req, res, next) => {
+    try {
+        let user = await User.findOne({userName: req.body.userName})
+        console.log(user)
+        let exist = false
+        for (let project of user.sDraft) {
+            if (project.projectId == req.body.projectid)
+                exist = true
+        }
+        if (exist) {
+            User.update({
+                    'userName': req.body.userName,
+                    'sDraft.projectId': req.body.projectid
+                },
+                {
+                    '$set': {
+                        'sDraft.$.signUpContent': req.body.signUpContent
+                    }
+                }, (err) => {
+                })
+        } else {
+            let projectDraft = {
+                projectId: req.body.projectId,
+                signUpContent: req.body.signUpContent
+            }
+            user.sDraft.push(projectDraft)
+            await user.save()
+            console.log(user)
+        }
+        res.json({
+            status: '0',
+            msg: ''
+        })
+    } catch (err) {
+        console.log(err)
+        res.json({status: "1", msg: err.message});
+    }
+})
+//获取草稿箱信息
+router.get("/getDraft", async (req, res, next) => {
+    try {
+        let user = await User.findOne({userName: req.param("userName")})
+        res.json({
+            status: '0',
+            msg: '',
+            result: {
+                projectDraft: user.draft
+            }
+        });
+    } catch (err) {
+        res.json({status: "1", msg: err.message});
+    }
+})
 //提交个人信息
 router.post("/submitInfo", (req, res, next) => {
     User.update({userName: req.body.userName}, {
@@ -43,6 +97,7 @@ router.post("/submitInfo", (req, res, next) => {
                 result: ''
             });
         } else {
+            console.log(doc)
             res.json({
                 status: '0',
                 msg: '',
@@ -149,6 +204,7 @@ router.post("/register", (req, res, next) => {
         userPwd: req.body.userPwd,
         auth: 0,
         projects: [],
+        sDraft: [],
         info: {
             userName: req.body.userName,
             name: '',
@@ -156,7 +212,7 @@ router.post("/register", (req, res, next) => {
             major: '',
             classNum: '',
             qqNum: '',
-            phoneNum: ''
+            phoneNum: '',
         }
     })
     newUser.save(function (err1, doc1) {
@@ -271,7 +327,7 @@ router.post("/signUp", (req, res, next) => {
                         sigInTime: createDate,
                         projectName: req.body.projectName,
                         checked: "未审核",
-                        projectContent:content
+                        projectContent: content
                     }
                     doc1.projects.push(projects1)
                     doc1.save((err2, doc2) => {

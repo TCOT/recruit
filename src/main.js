@@ -26,7 +26,7 @@ Vue.config.productionTip = false
 const store = new Vuex.Store({
     state: {
         nickName: '',
-        project:'',
+        draft:false
     },
     mutations: {
         //更新用户信息
@@ -34,8 +34,8 @@ const store = new Vuex.Store({
             state.nickName = nickName;
         },
         //更新项目详情
-        updateProject(state, project) {
-            state.project = project;
+        updateDraft(state, draft) {
+            state.draft = draft;
         }
     }
 });

@@ -53,16 +53,16 @@
                     this.loading=false
                 })
             },
-            toDetail(index, row) {
-                var param = {
-                    projectId : this.projects[index].projectId
-                }
+            toDetail(index,row) {
                 axios.get('/projects/getContent', {
-                    params:param
+                    params:{
+                        projectId : row.projectId
+                    }
                 }).then((response) => {
                     var res = response.data;
                     if (res.status == "0") {
-                        this.$router.push("/sindex/sprojects/" + this.projects[index].projectId)
+                        console.log(res.result.project.projectId)
+                        this.$router.push("/sindex/sprojects/" + res.result.project.projectId)
                     }
                 })
             }

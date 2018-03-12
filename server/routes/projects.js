@@ -15,10 +15,55 @@ mongoose.connection.on("error", function () {
 mongoose.connection.on("disconnected", function () {
     console.log("MongoDB connected disconnected.")
 });
+//项目发布自动保存
+router.post("/publishSave", async (req, res, next) => {
+    try {
+        User.update({'userName': req.body.userName},
+            {
+                '$set': {
+                    'draft.title': req.body.title,
+                    'draft.content': req.body.content,
+                }
+            }, (err) => {
+            })
+        res.json({
+            status: '0',
+            msg: ''
+        })
+    } catch (err) {
+        console.log(err)
+        res.json({status: "1", msg: err.message});
+    }
+})
+//自动保存评分
+router.post("/rateChange", async (req, res, next) => {
+    try {
+        Project.update({
+                'projectId': req.body.projectId,
+                'students.studentUserName': req.body.userName
+            },
+            {
+                '$set': {
+                    'students.$.rate': req.param("rate")
+                }
+            }, (err) => {
+            })
+        res.json({
+            status: '0',
+            msg: ''
+        })
+    } catch (err) {
+        console.log(err)
+        res.json({status: "1", msg: err.message});
+    }
+})
 //自动保存备注
 router.post("/editRemark", async (req, res, next) => {
     try {
-        Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
+        Project.update({
+                'projectId': req.body.projectId,
+                'students.studentUserName': req.body.userName
+            },
             {
                 '$set': {
                     'students.$.remarks': req.param("remarks")
@@ -45,6 +90,7 @@ router.get("/getStuDetailInfo", async (req, res, next) => {
                 user.info.remarks = student.remarks
                 user.info.signUpContent = student.signUpContent
                 user.info.status = student.checked
+                user.info.rate = student.rate
                 break
             }
         }
@@ -135,13 +181,33 @@ router.post("/listPassSomeone", (req, res, next) => {
         msg: 'suc'
     })
 })
+//教师端拒绝某个学生
+router.post("/refuseSomeone", (req, res, next) => {
+    Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
+        {
+            '$set': {
+                'students.$.checked': '已拒绝'
+            }
+        }, (err) => {
+        })
+    User.update({'userName': req.body.userName, 'projects.projectId': req.body.projectId},
+        {
+            '$set': {
+                'projects.$.checked': '已拒绝'
+            }
+        }, (err) => {
+        })
+    res.json({
+        status: '0',
+        msg: 'suc'
+    })
+})
 //教师端通过某个学生
 router.post("/passSomeone", (req, res, next) => {
     Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
         {
             '$set': {
                 'students.$.checked': '已通过',
-                'students.$.remarks': req.body.checkRemark
             }
         }, (err) => {
         })
@@ -165,8 +231,10 @@ router.get("/getStudentsList", async (req, res, next) => {
         for (const student of project.students) {
             let user = await User.findOne({userName: student.studentUserName})
             user.info.status = student.checked
+            user.info.rate = student.rate
             signUpStudents.push(user.info)
         }
+        console.log(signUpStudents)
         res.json({
             status: "0", msg: 'suc', result: {
                 students: signUpStudents,
@@ -232,24 +300,21 @@ router.get("/getAProjects", (req, res, next) => {
     })
 })
 //获取项目详情
-router.get("/getContent", (req, res, next) => {
-    Project.findOne(req.param.projectId, (err, doc) => {
-        if (err) {
-            res.json({
-                status: "1",
-                msg: err.message
-            });
-        } else {
-            console.log(doc)
-            res.json({
-                status: '0',
-                msg: '',
-                result: {
-                    project: doc
-                }
-            });
-        }
-    })
+router.get("/getContent", async (req, res, next) => {
+    try {
+        let project = await Project.findOne({projectId: req.param("projectId")})
+        console.log(project)
+        res.json({
+            status: '0',
+            msg: '',
+            result: {
+                project: project
+            }
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
 })
 //学生提交项目报名信息
 router.post("/signUp", (req, res, next) => {
@@ -275,7 +340,8 @@ router.post("/signUp", (req, res, next) => {
                                 sigInTime: createDate,
                                 projectName: doc1.projectName,
                                 signUpContent: req.body.content,
-                                checked: "未审核"
+                                checked: "未审核",
+                                rate: 0
                             }
                             doc2.projects.push(projects1)
                             doc2.save()
@@ -362,7 +428,8 @@ router.post("/publish", (req, res, next) => {
         projectId: platform + r1 + sysDate + r2,
         publisher: req.body.userName,
         releaseTime: createDate,
-        stuNum: 0
+        stuNum: 0,
+        students: []
     })
     console.log(newProject)
     newProject.save(function (err2, doc2) {
