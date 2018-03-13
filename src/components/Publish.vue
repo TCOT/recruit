@@ -24,7 +24,7 @@
                 <div class="html ql-editor" style="font-size: 16px"
                      v-html="draft.content"></div>
             </div>
-            <div style="float:left;margin-top: 10px">
+            <div style="float:left;margin-top: 10px;margin-bottom: 250px">
                 <el-button type="success" @click="submit">发布</el-button>
                 <el-button type="primary"  @click="back">返回</el-button>
             </div>
@@ -152,6 +152,16 @@
 </script>
 
 <style>
+    .ql-editor pre{
+        padding: 5px 10px;
+        background-color: #23241f;
+        color: #f8f8f2;
+        overflow: visible;
+        white-space: pre-wrap;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        border-radius: 3px;
+    }
     .ql-container.ql-snow{
         font-size: 16px;
     }

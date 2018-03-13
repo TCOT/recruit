@@ -8,19 +8,27 @@ import axios from 'axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import quillEditor from 'vue-quill-editor'
+import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import ImageResize from 'quill-image-resize-module'
 
-// import store from './store/index.js';
-import Util from './assets/lib/util';
+// import  ImageDrop  from 'quill-image-drop-module';
+
+import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
+Quill.register('modules/ImageResize', ImageResize)
+// Quill.register('modules/ImageDrop', ImageDrop)
+Quill.register('modules/ImageExtend', ImageExtend)
 
 import './assets/font-awesome-4.7.0/css/font-awesome.min.css'
 
 Vue.use(Vuex);
 Vue.use(ElementUI)
 Vue.use(quillEditor)
-
+const quillModules  = {
+    ImageResize: {}
+};
 Vue.config.productionTip = false
 
 const store = new Vuex.Store({

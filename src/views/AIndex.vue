@@ -42,17 +42,4 @@
         padding: 0 16px;
         margin: 10px auto;
     }
-
-    .el-main {
-        padding-top: 50px;
-    }
-
-    .el-header {
-        height: 75px;
-    }
-
-    .el-aside {
-        width: 270px;
-        padding-top: 50px;
-    }
 </style>

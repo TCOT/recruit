@@ -331,9 +331,7 @@
                 if (this.order == 'descending') {
                     data.sort(this.sortRateDes)
                 }
-                console.log(data)
                 data = data.slice((this.page - 1) * 5, this.page * 5)
-                console.log(data)
                 return data
             }
         },
@@ -646,6 +644,16 @@
 </script>
 
 <style>
+    .ql-editor pre{
+        padding: 5px 10px;
+        background-color: #23241f;
+        color: #f8f8f2;
+        overflow: visible;
+        white-space: pre-wrap;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        border-radius: 3px;
+    }
     .el-table td, .el-table th.is-leaf {
         border-bottom: 0.1px solid #ebeef5;
     }

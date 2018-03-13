@@ -86,7 +86,6 @@ router.get("/getStuDetailInfo", async (req, res, next) => {
         let user = await User.findOne({userName: req.param("userName")})
         for (let student of project.students) {
             if (student.studentUserName == req.param("userName")) {
-                console.log(student)
                 user.info.remarks = student.remarks
                 user.info.signUpContent = student.signUpContent
                 user.info.status = student.checked
@@ -94,7 +93,6 @@ router.get("/getStuDetailInfo", async (req, res, next) => {
                 break
             }
         }
-        console.log(user.info)
         res.json({
             status: '0',
             msg: '',

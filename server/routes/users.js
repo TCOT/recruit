@@ -26,20 +26,42 @@ router.get('/', function (req, res, next) {
 });
 
 module.exports = router;
+//学生端获取具体项目报名草稿箱内容
+router.get("/getSDraft",async (req,res,next)=>{
+    try {
+        let user = await User.findOne({userName: req.param("userName")})
+        let projectDraftContent
+        for (let draft of user.sDraft){
+            if(draft.projectId == req.param("projectId")){
+                projectDraftContent = draft.signUpContent
+                break
+            }
+        }
+        res.json({
+            status:'0',
+            msg:'suc',
+            result:{
+                projectDraftContent:projectDraftContent
+            }
+        })
+    }catch (err){
+        res.json({status: "1", msg: err.message});
+    }
+})
 //用户填写报名信息时的自动保存
 router.post("/signUpSave", async (req, res, next) => {
     try {
         let user = await User.findOne({userName: req.body.userName})
-        console.log(user)
+        console.log(req.body.projectId)
         let exist = false
         for (let project of user.sDraft) {
-            if (project.projectId == req.body.projectid)
+            if (project.projectId == req.body.projectId)
                 exist = true
         }
         if (exist) {
             User.update({
                     'userName': req.body.userName,
-                    'sDraft.projectId': req.body.projectid
+                    'sDraft.projectId': req.body.projectId
                 },
                 {
                     '$set': {

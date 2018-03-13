@@ -19,22 +19,26 @@
             </el-button>
         </div>
         <div v-if="editflag == true">
-            <div class="editorWrapper" style="width: 850px">
-                <div class="quill-editor-example">
+            <div class="editorWrapper" style="width: 850px" v-loading="loading">
+                <div>
+                    <div style="display: flex;align-items: center;">
                     <p class="prompt-text" style="text-align: left"><span
                             class="prompt-icon">*</span>请填写报名信息：</p>
                     <el-tag :type="last == true?'':'success' " v-if=" first == true ">{{saveInfo}}
                     </el-tag>
+                    </div>
                     <quill-editor
-                            ref="myTextEditor"
+                            ref="myQuillEditor"
                             v-model="signUpContent"
+                            :options="editorOption"
                             @change="onEditorChange($event)">
                     </quill-editor>
                     <div  class="html ql-editor" style="font-size: 16px;text-align: left"
                           v-html="signUpContent"></div>
                 </div>
                 <div style="float:left;margin-top: 10px">
-                    <el-button type="primary" @click="submit">提交</el-button>
+                    <el-button type="primary" @click="submit" style="margin-bottom: 300px">提交
+                    </el-button>
                     <el-button type="primary" plain @click="back">返回</el-button>
                 </div>
             </div>
@@ -43,6 +47,7 @@
 </template>
 
 <script>
+    import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
     import axios from 'axios'
 
     export default {
@@ -55,7 +60,16 @@
                 loading: true,
                 last: false,
                 first: false,
-                saveInfo: ''
+                saveInfo: '',
+                editorOption: {
+                    modules: {
+                        imageResize: {},
+                        toolbar: {
+                            container: container
+                        }
+                    },
+
+                }
             }
         },
         mounted() {
@@ -73,7 +87,7 @@
             onEditorChange(){
                 axios.post("/users/signUpSave", {
                     userName: this.$store.state.nickName,
-                    projectid: this.$route.params.id,
+                    projectId: this.$route.params.id,
                     signUpContent: this.signUpContent
                 }).then((response) => {
                     this.first = true
@@ -103,6 +117,19 @@
             },
             signUp() {
                 this.editflag = true
+                this.loading = false
+                axios.get('/users/getSDraft', {
+                    params: {
+                        userName:this.$store.state.nickName,
+                        projectId: this.$route.params.id
+                    }
+                }).then((response) => {
+                    let res = response.data;
+                    if (res.status == "0") {
+                        this.signUpContent = res.result.projectDraftContent
+                        this.loading = false
+                    }
+                })
             },
             back() {
                 this.editflag = false
@@ -138,6 +165,16 @@
 </script>
 
 <style>
+    .ql-editor pre{
+        padding: 5px 10px;
+        background-color: #23241f;
+        color: #f8f8f2;
+        overflow: visible;
+        white-space: pre-wrap;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        border-radius: 3px;
+    }
     .ql-container.ql-snow{
         font-size: 16px;
     }

@@ -1,15 +1,13 @@
 <template>
     <div class="index">
-        <s-header></s-header>
-        <div class="smain">
-            <s-menu></s-menu>
-            <router-view></router-view>
+        <div style="min-height: calc(100vh - 50px);">>
+            <s-header></s-header>
+            <div class="smain">
+                <s-menu></s-menu>
+                <router-view></router-view>
+            </div>
         </div>
-        <a-footer style="position: fixed;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    margin: 0 auto;"></a-footer>
+        <a-footer></a-footer>
     </div>
 </template>
 
@@ -32,7 +30,7 @@
             JoinInfo,
             AFooter
         },
-        mounted(){
+        mounted() {
             this.init()
         },
         data() {
@@ -41,14 +39,14 @@
             }
         },
         methods: {
-            init(){
+            init() {
             }
         }
     }
 </script>
 
 <style>
-    .smain{
+    .smain {
         display: flex;
         position: relative;
         box-align: start;
@@ -56,15 +54,5 @@
         width: 1200px;
         padding: 0 16px;
         margin: 10px auto;
-    }
-    .index{
-        /*background-color: #f6f6f6;*/
-        /*height: 100vh;*/
-        /*background-image: url(./../assets/0.png);*/
-        /*background-attachment: fixed;*/
-        /*background-repeat: no-repeat;*/
-        /*background-size: cover;*/
-        /*width: 100%;*/
-        /*height: 100vh;*/
     }
 </style>
