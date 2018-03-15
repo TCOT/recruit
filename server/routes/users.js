@@ -26,6 +26,33 @@ router.get('/', function (req, res, next) {
 });
 
 module.exports = router;
+//学生端获取是否有报名内容标识
+router.get("/geSignUpDraftStatus",async (req,res,next)=>{
+    try {
+        let user = await User.findOne({userName: req.param("userName")})
+        let sSignUpDraft=[]
+        if(user.sDraft.length !== 0){
+            for ( let draft of user.sDraft){
+                if(draft.signUpContent !== ''){
+                    let projectDraft ={
+                        projectId:draft.projectId
+                    }
+                    sSignUpDraft.push(projectDraft)
+                }
+            }
+        }
+        res.json({
+            status:'0',
+            msg:'suc',
+            result:{
+                signUpDraft :sSignUpDraft
+            }
+        })
+    }catch (err){
+        console.log(err)
+        res.json({status: "1", msg: err.message});
+    }
+})
 //学生端获取具体项目报名草稿箱内容
 router.get("/getSDraft",async (req,res,next)=>{
     try {
@@ -52,7 +79,6 @@ router.get("/getSDraft",async (req,res,next)=>{
 router.post("/signUpSave", async (req, res, next) => {
     try {
         let user = await User.findOne({userName: req.body.userName})
-        console.log(req.body.projectId)
         let exist = false
         for (let project of user.sDraft) {
             if (project.projectId == req.body.projectId)
@@ -65,18 +91,17 @@ router.post("/signUpSave", async (req, res, next) => {
                 },
                 {
                     '$set': {
-                        'sDraft.$.signUpContent': req.body.signUpContent
+                        'sDraft.$.signUpContent': req.body.signUpDraftContent
                     }
                 }, (err) => {
                 })
         } else {
             let projectDraft = {
                 projectId: req.body.projectId,
-                signUpContent: req.body.signUpContent
+                signUpContent: req.body.signUpDraftContent
             }
             user.sDraft.push(projectDraft)
             await user.save()
-            console.log(user)
         }
         res.json({
             status: '0',
@@ -328,51 +353,6 @@ router.post("/login", function (req, res, next) {
         }
     })
 });
-//获取项目列表
-router.get("/getProjects", (req, res, next) => {
-
-})
-//学生报名某项目
-router.post("/signUp", (req, res, next) => {
-    try {
-        User.findOne({userName: req.body.userName}, (err1, doc1) => {
-            if (err1) {
-                res.json({
-                    status: "1",
-                    msg: err1.message
-                })
-            } else {
-                if (doc1) {
-                    let createDate = new Date().Format('yyyy-MM-dd');
-                    let projects1 = {
-                        projectId: req.body.projectId,
-                        sigInTime: createDate,
-                        projectName: req.body.projectName,
-                        checked: "未审核",
-                        projectContent: content
-                    }
-                    doc1.projects.push(projects1)
-                    doc1.save((err2, doc2) => {
-                        if (err2) {
-                            res.json({
-                                status: "1",
-                                msg: err2.message
-                            })
-                        } else {
-                            res.json({
-                                status: '0',
-                                msg: '',
-                                result: 'suc'
-                            })
-                        }
-                    })
-                }
-            }
-        })
-    } catch (err) {
-        console.log(err)
-    }
-})
 //登入拦截
 router.get("/checkLogin", function (req, res, next) {
     if (req.cookies.userId) {

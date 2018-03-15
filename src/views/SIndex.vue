@@ -1,6 +1,6 @@
 <template>
     <div class="index">
-        <div style="min-height: calc(100vh - 50px);">>
+        <div style="min-height: calc(100vh - 50px);">
             <s-header></s-header>
             <div class="smain">
                 <s-menu></s-menu>
@@ -17,7 +17,6 @@
     import SHeader from './../components/SHeader'
     import SMenu from './../components/SMenu'
     import SProjects from './../components/SProjects'
-    import JoinInfo from './../components/JoinInfo'
     import AFooter from '../components/AFooter'
 
     export default {
@@ -27,7 +26,6 @@
             SProjects,
             SInfo,
             Details,
-            JoinInfo,
             AFooter
         },
         mounted() {
@@ -40,6 +38,7 @@
         },
         methods: {
             init() {
+
             }
         }
     }

@@ -39,10 +39,12 @@
                 </el-form>
             </el-card>
         </div>
+        <div style="margin-bottom: 300px"></div>
     </div>
 </template>
 
 <script>
+    import _ from 'lodash'
     import axios from 'axios'
 
     export default {
@@ -50,36 +52,28 @@
             this.init()
         },
         methods: {
-            saveStatusToFalse() {
+            debounceChange: _.debounce( (self)=> {
                 let date = new Date();
                 let hour = date.getHours();
                 let minute = date.getMinutes();
-                this.saveStatus = false
-                this.last = true
-                this.saveInfo = '最近保存 ' + hour + ':' + minute
-            },
-            update(){
                 axios.post("/users/submitInfo", {
-                    userName: this.$store.state.nickName,
-                    name: this.info.name,
-                    sex: this.info.sex,
-                    major: this.info.major,
-                    classNum: this.info.classNum,
-                    qqNum: this.info.qqNum,
-                    phoneNum: this.info.phoneNum
-                }).then((response) => {
-                    let res = response.data;
-                    if (res.status == "0") {
-                        this.first = true
-                        this.saveStatus = true
-                        this.last = false
-                        this.saveInfo = '保存成功'
-                        let res = response.data
-                        if (res.status == '0') {
-                            setTimeout(this.saveStatusToFalse, 5000)
-                        }
-                    }
+                    userName: self.$store.state.nickName,
+                    name: self.info.name,
+                    sex: self.info.sex,
+                    major: self.info.major,
+                    classNum: self.info.classNum,
+                    qqNum: self.info.qqNum,
+                    phoneNum: self.info.phoneNum
+                }).then(()=>{
+                    self.last = true
+                    self.saveInfo = '最近保存 ' + hour + ':' + minute
                 })
+            },1800),
+            update(){
+                this.last = false
+                this.first = true
+                this.saveInfo = '正在保存...'
+                this.debounceChange(this)
             },
             init() {
                 this.loading = true

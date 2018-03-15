@@ -39,6 +39,7 @@
                 </el-table-column>
             </el-table>
         </el-card>
+
     </div>
 </template>
 
@@ -61,17 +62,7 @@
                 this.loading = false
             },
             toDetail(index, row) {
-                let param = {
-                    projectId : this.projects[index].projectId
-                }
-                axios.get('projects/getContent', {
-                    params:param
-                }).then((response) => {
-                    let res = response.data;
-                    if (res.status == "0") {
-                        this.$router.push('/aindex/project/' + this.projects[index].projectId)
-                    }
-                })
+                this.$router.push('/aindex/project/' + this.projects[index].projectId)
             }
         },
         data() {

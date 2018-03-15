@@ -1,12 +1,12 @@
 <template>
     <div style="padding-right: 250px">
         <el-card class="allProjectCard">
-            <el-table   v-loading="loading"
-                    :data="projects"
+            <el-table v-loading="loading"
+                      :data="projects"
                       style="width: 100%"
-            class="listProjectTable">
+                      class="listProjectTable">
                 <el-table-column
-                        label="发布日期" width="180" >
+                        label="发布日期" width="180">
                     <template slot-scope="scope">
                         <span>{{ scope.row.releaseTime }}</span>
                     </template>
@@ -26,13 +26,16 @@
                 <el-table-column
                         prop="address" label="操作">
                     <template slot-scope="scope">
-                        <el-button type="primary"  icon="el-icon-message"
-                                   @click="toDetail(scope.$index,scope.row)">查看详情
-                        </el-button>
+                        <el-badge is-dot :hidden="!scope.row.draftStatus">
+                            <el-button type="primary" icon="el-icon-message"
+                                       @click="toDetail(scope.$index,scope.row)">详情
+                            </el-button>
+                        </el-badge>
                     </template>
                 </el-table-column>
             </el-table>
         </el-card>
+        <div style="margin-bottom: 300px"></div>
     </div>
 </template>
 
@@ -45,42 +48,47 @@
         },
         methods: {
             init() {
-                axios.get("projects/getProjects", {}).then((response) => {
-                    var res = response.data;
-                    if (res.status == "0") {
-                        this.projects = res.result.list;
-                    }
-                    this.loading=false
-                })
-            },
-            toDetail(index,row) {
-                axios.get('/projects/getContent', {
+                axios.get("projects/getProjects", {
                     params:{
-                        projectId : row.projectId
+                        userName: this.$store.state.nickName
                     }
                 }).then((response) => {
                     var res = response.data;
                     if (res.status == "0") {
-                        console.log(res.result.project.projectId)
-                        this.$router.push("/sindex/sprojects/" + res.result.project.projectId)
+                        this.projects = res.result.projects;
                     }
+                    this.loading = false
                 })
+            },
+            toDetail(index, row) {
+                this.$router.push("/sindex/sprojects/" + row.projectId)
             }
         },
         data() {
             return {
                 projects: [],
-                loading:true
+                loading: true,
+                hidden:false
             }
         }
     }
 </script>
 
 <style>
-    .listProjectTable{
+    .el-badge__content.is-fixed{
+        margin-right: 13px;
+        margin-top: 10px;
+    }
+    .el-badge__content.is-fixed.is-dot{
+        margin-right: 10px;
+        margin-top: 10px;
+        border: none;
+    }
+    .listProjectTable {
         text-align: left;
     }
-    .allProjectCard{
+
+    .allProjectCard {
         width: 800px;
         height: 400px;
         margin-top: 100px;

@@ -146,7 +146,7 @@
                                     <span>
                                     备注信息：
                                     </span>
-                                    <el-tag :type="last == true?'':'success' "
+                                    <el-tag :type="last == true?'success':'' "
                                             v-if=" first == true ">{{saveInfo}}
                                     </el-tag>
                                 </div>
@@ -250,9 +250,7 @@
                                           ref="myTextEditor"
                                           v-model="checkRemark"
                                           :options="editorOption"
-                                          @blur="onEditorBlur($event)"
-                                          @focus="onEditorFocus($event)"
-                                          @ready="onEditorReady($event)">
+                                          @change="onEditorChange">
                             </quill-editor>
                         </div>
                     </div>
@@ -278,6 +276,10 @@
 </template>
 
 <script>
+    import Quill from 'quill'
+    import _ from 'lodash'
+    import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
+    Quill.register('modules/ImageExtend', ImageExtend)
     import axios from 'axios'
 
     export default {
@@ -308,7 +310,17 @@
                 saveInfo: '',
                 first: false,
                 nextData: [],
-                order: ''
+                order: '',
+                editorOption: {
+                    modules: {
+                        ImageExtend: {
+                        },
+                        imageResize: {},
+                        toolbar: {
+                            container: container
+                        }
+                    },
+                }
             }
         },
         mounted() {
@@ -450,29 +462,23 @@
                 })
             },
             onEditorChange() {
-                axios.post("/projects/editRemark", {
-                    userName: this.stuDetailInfo.userName,
-                    projectId: this.$route.params.projectId,
-                    remarks: this.stuDetailInfo.remarks
-                }).then((response) => {
-                    this.first = true
-                    this.saveStatus = true
-                    this.last = false
-                    this.saveInfo = '保存成功'
-                    let res = response.data
-                    if (res.status == '0') {
-                        setTimeout(this.saveStatusToFalse, 5000)
-                    }
-                })
+                this.last = false
+                this.first = true
+                this.saveInfo = '正在保存...'
+                this.debounceChange(this)
             },
-            saveStatusToFalse() {
+            debounceChange: _.debounce( (self)=> {
                 let date = new Date();
                 let hour = date.getHours();
                 let minute = date.getMinutes();
-                this.saveStatus = false
-                this.last = true
-                this.saveInfo = '最近保存 ' + hour + ':' + minute
-            },
+                self.last = true
+                self.saveInfo = '最近保存 ' + hour + ':' + minute
+                axios.post("/projects/editRemark", {
+                    userName: self.stuDetailInfo.userName,
+                    projectId: self.$route.params.projectId,
+                    remarks: self.stuDetailInfo.remarks
+                })
+            },2000),
             cellClick(row, column, cell, event) {
                 this.first = false
                 if (column.property == 'name') {
@@ -569,11 +575,10 @@
             },
             init() {
                 this.loading = true
-                let param = {
-                    projectId: this.$route.params.projectId
-                }
-                axios.get('/projects/getContent', {
-                    params: param
+                axios.get('/projects/aGetProjectDetail', {
+                    params: {
+                        projectId: this.$route.params.projectId
+                    }
                 }).then((response) => {
                     let res = response.data;
                     if (res.status == "0") {
@@ -586,11 +591,10 @@
             handleClick(tab, event) {
                 if (tab.name == "first") {
                     this.loading = true
-                    let param = {
-                        projectId: this.$route.params.projectId
-                    }
-                    axios.get('/projects/getContent', {
-                        params: param
+                    axios.get('/projects/aGetProjectDetail', {
+                        params: {
+                            projectId: this.$route.params.projectId
+                        }
                     }).then((response) => {
                         let res = response.data;
                         if (res.status == "0") {

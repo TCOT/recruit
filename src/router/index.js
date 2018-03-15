@@ -6,7 +6,6 @@ import Entry from '@/views/Login'
 import SIndex from '@/views/SIndex'
 import SProjects from '@/components/SProjects'
 import SInof from '@/components/SInfo'
-import JoinInfo from '@/components/JoinInfo'
 import SignUp from '@/components/SignUp'
 import ProjectList from '@/components/ProjectList'
 import ProjectDetail from '@/components/ProjectDetail'
@@ -49,9 +48,6 @@ export default new Router({
             },{
                 path: 'sprojects',
                 component: SProjects,
-            },{
-                path: 'joininfo',
-                component: JoinInfo
             },{
                 path: 'sprojects/:id',
                 component: SignUp

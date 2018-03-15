@@ -18,6 +18,7 @@ mongoose.connection.on("disconnected", function () {
 //项目发布自动保存
 router.post("/publishSave", async (req, res, next) => {
     try {
+        console.log(req.body.userName)
         User.update({'userName': req.body.userName},
             {
                 '$set': {
@@ -26,6 +27,7 @@ router.post("/publishSave", async (req, res, next) => {
                 }
             }, (err) => {
             })
+        console.log(req.body.title)
         res.json({
             status: '0',
             msg: ''
@@ -66,7 +68,7 @@ router.post("/editRemark", async (req, res, next) => {
             },
             {
                 '$set': {
-                    'students.$.remarks': req.param("remarks")
+                    'students.$.remarks': req.body.remarks
                 }
             }, (err) => {
             })
@@ -159,25 +161,30 @@ router.post("/listRefuseSomeone", (req, res, next) => {
     })
 })
 //列表通过某个学生
-router.post("/listPassSomeone", (req, res, next) => {
-    Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
-        {
-            '$set': {
-                'students.$.checked': '已通过'
-            }
-        }, (err) => {
+router.post("/listPassSomeone", async (req, res, next) => {
+    try {
+        Project.update({'projectId': req.body.projectId, 'students.studentUserName': req.body.userName},
+            {
+                '$set': {
+                    'students.$.checked': '已通过'
+                }
+            }, (err) => {
+            })
+        User.update({'userName': req.body.userName, 'projects.projectId': req.body.projectId},
+            {
+                '$set': {
+                    'projects.$.checked': '已通过'
+                }
+            }, (err) => {
+            })
+        res.json({
+            status: '0',
+            msg: 'suc'
         })
-    User.update({'userName': req.body.userName, 'projects.projectId': req.body.projectId},
-        {
-            '$set': {
-                'projects.$.checked': '已通过'
-            }
-        }, (err) => {
-        })
-    res.json({
-        status: '0',
-        msg: 'suc'
-    })
+    } catch (err) {
+        console.log(err)
+        res.json({status: "1", msg: err.message});
+    }
 })
 //教师端拒绝某个学生
 router.post("/refuseSomeone", (req, res, next) => {
@@ -243,65 +250,77 @@ router.get("/getStudentsList", async (req, res, next) => {
         res.json({status: "1", msg: err.message});
     }
 })
-// router.get("/getStudentsList", (req, res, next) => {
-//     var signUpStudents = []
-//     Project.findOne({projectId: req.param('projectId')}, (err1, doc1) => {
-//         if (err1) {
-//             res.json({
-//                 status: "1",
-//                 msg: err1.message
-//             });
-//         } else {
-//             if (doc1) {
-//                 doc1.students.forEach((item) => {
-//                     User.findOne({userName: item.studentUserName}, (err2, user) => {
-//                         if (err2) {
-//                             res.json({
-//                                 status: "1",
-//                                 msg: err2.message
-//                             });
-//                         } else {
-//                             signUpStudents.push(user.info)
-//                         }
-//                     })
-//                 })
-//                 console.log(signUpStudents)
-//                 res.json({
-//                     status: "0",
-//                     msg: 'suc',
-//                     result:{
-//                         students:signUpStudents
-//                     }
-//                 })
-//             }
-//         }
-//     })
-// })
-//教师端获取项目列表
-router.get("/getAProjects", (req, res, next) => {
-    let projects = Project.find()
-    projects.exec(function (err, doc) {
-        if (err) {
-            res.json({
-                status: '1',
-                msg: err.message
-            });
-        } else {
-            res.json({
-                status: '0',
-                msg: '',
-                result: {
-                    list: doc
-                }
-            });
-        }
-    })
+//获取教师端项目列表
+router.get("/getAProjects", async (req, res, next) => {
+    try {
+        let projects = await Project.find()
+        console.log(projects)
+        res.json({
+            status: '0',
+            msg: '',
+            result: {
+                list: projects
+            }
+        })
+    } catch (err) {
+        console.log(err)
+        res.json({
+            status: "1",
+            msg: err.message
+        })
+    }
 })
-//获取项目详情
-router.get("/getContent", async (req, res, next) => {
+//学生端项目详情页初始化
+router.get("/sGetSignUpContentInit", async (req, res, next) => {
+    try {
+        let signUpStatus = false
+        let SignUpContent = ''
+        let checkedStatus = ''
+        let signUpDraftContent
+        let user = await User.findOne({userName: req.param("userName")})
+        for (let draft of user.sDraft) {
+            if (draft.projectId == req.param("projectId")) {
+                signUpDraftContent = draft.signUpContent
+                break
+            }
+        }
+        let project = await Project.findOne({projectId: req.param("projectId")})
+        for (let student of project.students) {
+            if (student.studentUserName == req.param("userName")) {
+                signUpStatus = true
+                SignUpContent = student.signUpContent
+                if (student.checked !== '已通过' && student.checked !== '已拒绝') {
+                    checkedStatus = '审核中'
+                } else {
+                    checkedStatus = student.checked
+                }
+                break
+            }
+        }
+        res.json({
+            status: '0',
+            msg: '',
+            result: {
+                signUpDraftContent: signUpDraftContent,
+                checkedStatus: checkedStatus,
+                SignUpContent: SignUpContent,
+                project: project,
+                signUpStatus: signUpStatus
+            }
+        })
+    }
+    catch (err) {
+        console.log(err)
+        res.json({
+            status: "1",
+            msg: err.message
+        })
+    }
+})
+//教师端获取具体项目内容
+router.get("/aGetProjectDetail", async (req, res, next) => {
     try {
         let project = await Project.findOne({projectId: req.param("projectId")})
-        console.log(project)
         res.json({
             status: '0',
             msg: '',
@@ -312,66 +331,57 @@ router.get("/getContent", async (req, res, next) => {
     }
     catch (err) {
         console.log(err)
+        res.json({
+            status: "1",
+            msg: err.message
+        })
     }
 })
 //学生提交项目报名信息
-router.post("/signUp", (req, res, next) => {
-    Project.findOne({projectId: req.body.projectName}, (err1, doc1) => {
-        if (err1) {
-            res.json({
-                status: "1",
-                msg: err.message
+router.post("/signUp", async (req, res, next) => {
+    try {
+        User.update({'userName': req.body.userName, 'sDraft.projectId': req.body.projectId},
+            {
+                '$set': {
+                    'sDraft.$.signUpContent': ''
+                }
+            }, (err) => {
             })
-        } else {
-            if (doc1) {
-                User.findOne({userName: req.body.userName}, (err2, doc2) => {
-                    if (err2) {
-                        res.json({
-                            status: "1",
-                            msg: err2.message
-                        })
-                    } else {
-                        if (doc2) {
-                            let createDate = new Date().Format('yyyy-MM-dd');
-                            let projects1 = {
-                                projectId: doc1.projectId,
-                                sigInTime: createDate,
-                                projectName: doc1.projectName,
-                                signUpContent: req.body.content,
-                                checked: "未审核",
-                                rate: 0
-                            }
-                            doc2.projects.push(projects1)
-                            doc2.save()
-                            var info = {
-                                studentUserName: doc2.userName,
-                                signUpContent: req.body.content,
-                                checked: '未审核',
-                                studentName: doc2.info.name,
-                                remarks: ''
-                            }
-                            doc1.students.push(info);
-                            doc1.stuNum++
-                            doc1.save((err3, doc3) => {
-                                if (err3) {
-                                    res.json({
-                                        status: "1",
-                                        msg: err3.message
-                                    })
-                                } else {
-                                    res.json({
-                                        status: '0',
-                                        msg: '',
-                                        result: 'suc'
-                                    })
-                                }
-                            })
-                        }
-                    }
-                })
-            }
+        let project = await Project.findOne({projectId: req.body.projectId})
+        let user = await User.findOne({userName: req.body.userName})
+        let createDate = new Date().Format('yyyy-MM-dd');
+        let projects1 = {
+            projectId: req.body.projectId,
+            sigInTime: createDate,
+            projectName: project.projectName,
+            signUpContent: req.body.content,
+            checked: "未审核"
         }
-    })
+        user.projects.push(projects1)
+        user.save()
+        var info = {
+            studentUserName: user.userName,
+            signUpContent: req.body.content,
+            checked: '未审核',
+            studentName: user.info.name,
+            remarks: '',
+            rate: 0
+        }
+        project.students.push(info);
+        project.stuNum++
+        project.save()
+        res.json({
+            status: '0',
+            msg: '',
+            result: 'suc'
+        })
+    } catch (err) {
+        console.log(err)
+        res.json({
+            status: "1",
+            msg: err.message
+        })
+    }
 })
 //学生获取项目列表
 router.get("/getInfo", (req, res, next) => {
@@ -390,60 +400,87 @@ router.get("/getInfo", (req, res, next) => {
     })
 })
 //学生端获取项目列表
-router.get("/getProjects", (req, res, next) => {
-    let projects = Project.find()
-    projects.exec(function (err, doc) {
-        if (err) {
-            res.json({
-                status: '1',
-                msg: err.message
-            });
-        } else {
-            res.json({
-                status: '0',
-                msg: '',
-                result: {
-                    count: doc.length,
-                    list: doc
-                }
-            });
+router.get("/getProjects", async (req, res, next) => {
+    try {
+        let projects = await Project.find()
+        let sendProjects = []
+        for (let project of projects) {
+            let item = {
+                projectId: project.projectId,
+                publisher: project.publisher,
+                releaseTime: project.releaseTime,
+                projectName: project.projectName,
+                draftStatus: false
+            }
+            sendProjects.push(item)
         }
-    })
+        let user = await User.findOne({userName: req.param("userName")})
+        for (let draft of user.sDraft) {
+            if (draft.signUpContent !== '') {
+                for (let project of sendProjects) {
+                    if (project.projectId == draft.projectId) {
+                        project.draftStatus = true
+                        break
+                    }
+                }
+            }
+        }
+        res.json({
+            status: '0',
+            msg: '',
+            result: {
+                projects: sendProjects
+            }
+        })
+    } catch (err) {
+        console.log(err)
+        res.json({
+            status: "1",
+            msg: err.message
+        })
+    }
 })
 //发布项目
-router.post("/publish", (req, res, next) => {
-    var platform = '622';
-    console.log("111")
-    var r1 = Math.floor(Math.random() * 10);
-    var r2 = Math.floor(Math.random() * 10);
-    var sysDate = new Date().Format('yyyyMMddhhmmss')
-    var createDate = new Date().Format('yyyy-MM-dd');
-    var project = mongoose.model("Project");
-    var newProject = new project
-    ({
-        projectName: req.body.projectName,
-        projectContent: req.body.projectContent,
-        projectId: platform + r1 + sysDate + r2,
-        publisher: req.body.userName,
-        releaseTime: createDate,
-        stuNum: 0,
-        students: []
-    })
-    console.log(newProject)
-    newProject.save(function (err2, doc2) {
-        if (err2) {
-            res.json({
-                status: "1",
-                msg: err2.message
+router.post("/publish", async (req, res, next) => {
+    try {
+        var platform = '622';
+        await User.update({'userName': req.body.userName},
+            {
+                '$set': {
+                    'draft.title': '',
+                    'draft.content': '',
+                }
+            }, (err) => {
             })
-        } else {
-            res.json({
-                status: '0',
-                msg: '',
-                result: 'suc'
-            })
-        }
-    })
+        console.log(user.draft)
+        var r1 = Math.floor(Math.random() * 10);
+        var r2 = Math.floor(Math.random() * 10);
+        var sysDate = new Date().Format('yyyyMMddhhmmss')
+        var createDate = new Date().Format('yyyy-MM-dd');
+        var project = mongoose.model("Project");
+        var newProject = new project
+        ({
+            projectName: req.body.projectName,
+            projectContent: req.body.projectContent,
+            projectId: platform + r1 + sysDate + r2,
+            publisher: req.body.userName,
+            releaseTime: createDate,
+            stuNum: 0,
+            students: []
+        })
+        await newProject.save()
+        res.json({
+            status: '0',
+            msg: '',
+            result: 'suc'
+        })
+    } catch (err) {
+        console.log(err)
+        res.json({
+            status: "1",
+            msg: err.message
+        })
+    }
 })
 
 

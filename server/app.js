@@ -10,8 +10,11 @@ var users = require('./routes/users');
 var projects = require('./routes/projects');
 var errorhandler = require('errorhandler');
 
-var app = express();
 
+var app = express();
+//handle request entity too large
+app.use(bodyParser.json({limit:'50mb'}));
+app.use(bodyParser.urlencoded({limit:'50mb',extended:true}));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.html',ejs.__express)
@@ -34,6 +37,7 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {

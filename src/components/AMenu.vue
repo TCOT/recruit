@@ -2,7 +2,7 @@
     <div>
         <el-col :span="12">
             <el-menu
-                    default-active="2"
+                    default-active="1"
                     class="el-menu-vertical-demo">
                 <el-menu-item index="1" @click="select(1)">
                     <i class="el-icon-tickets" style="font-size: 24px"></i>
