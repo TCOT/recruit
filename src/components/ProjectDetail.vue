@@ -210,9 +210,10 @@
 
 <script>
     import Quill from 'quill'
+    import { ImageDrop } from 'quill-image-drop-module';
     import _ from 'lodash'
     import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
-
+    Quill.register('modules/imageDrop', ImageDrop);
     Quill.register('modules/ImageExtend', ImageExtend)
     import axios from 'axios'
 
@@ -245,7 +246,8 @@
                 order: '',
                 editorOption: {
                     modules: {
-                        ImageExtend: {},
+                        // ImageExtend: {},
+                        imageDrop: true,
                         imageResize: {},
                         toolbar: {
                             container: container
