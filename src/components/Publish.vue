@@ -12,7 +12,7 @@
                           v-model="draft.title"></el-input>
                 <div style="display: flex;margin: 5px 5px 5px 0;">
                     <p style="text-align: left;margin: 5px 0 10px 0;">正文：{{courier}}</p>
-                    <el-tag :type="last == true?'success':'' "  v-if=" first == true ">{{saveInfo}}
+                    <el-tag :type="last == true?'success':'' " v-if=" first == true ">{{saveInfo}}
                     </el-tag>
                 </div>
                 <quill-editor
@@ -22,8 +22,22 @@
                         @change="onEditorChange">
                 </quill-editor>
             </div>
-            <div style="float:left;margin-top: 10px;margin-bottom: 250px">
-                <el-button type="success" @click="submit">发布</el-button>
+            <div style="display: flex;align-items: center; margin: 10px 0;">
+                <span style="margin-right: 20px">选择报名期限:</span>
+                <el-date-picker
+                        unlink-panels
+                        clearable
+                        v-model="signUpTime"
+                        type="daterange"
+                        format="yyyy 年 M 月 dd 日"
+                        value-format="yyyy-M-dd"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期">
+                </el-date-picker>
+            </div>
+            <div style="float:left;margin-bottom: 250px">
+                <el-button type="success" :loading="publishLoading" @click="submit">发布</el-button>
             </div>
         </div>
         <div style="margin-bottom: 300px">
@@ -42,7 +56,9 @@
     export default {
         data() {
             return {
+                signUpTime:[],
                 loading: false,
+                publishLoading:false,
                 draft: {},
                 last: false,
                 first: false,
@@ -88,15 +104,18 @@
                 })
             },
             inputChange() {
+                console.log(this.signUpTime)
                 this.last = false
                 this.first = true
                 this.saveInfo = '正在保存...'
+                this.publishLoading = true
                 this.debounceChange(this)
             },
             onEditorChange() {
                 this.last = false
                 this.first = true
                 this.saveInfo = '正在保存...'
+                this.publishLoading = true
                 this.debounceChange(this)
             },
             debounceChange: _.debounce((self) => {
@@ -107,13 +126,14 @@
                     userName: self.$store.state.nickName,
                     title: self.draft.title,
                     content: self.draft.content
-                }).then(()=>{
+                }).then(() => {
                     self.last = true
                     self.saveInfo = '最近保存 ' + hour + ':' + minute
+                    self.publishLoading = false
                 })
             }, 1800),
             submit() {
-                if (!this.draft.title || !this.draft.content) {
+                if (!this.draft.title || !this.draft.content || this.signUpTime.length == 0) {
                     this.$message({
                         showClose: true,
                         message: '项目信息不完整',
@@ -127,6 +147,7 @@
                     type: 'success'
                 }).then(() => {
                     axios.post("/projects/publish", {
+                        signUpTime:this.signUpTime,
                         userName: this.$store.state.nickName,
                         projectName: this.draft.title,
                         projectContent: this.draft.content

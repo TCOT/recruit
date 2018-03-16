@@ -41,7 +41,7 @@
         },
         methods: {
             init() {
-                axios.get("/users/geSignUpDraftStatus", {
+                axios.get("/users/getSignUpDraftStatus", {
                     params: {
                         userName: this.$store.state.nickName
                     }

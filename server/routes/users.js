@@ -27,13 +27,13 @@ router.get('/', function (req, res, next) {
 
 module.exports = router;
 //学生端获取是否有报名内容标识
-router.get("/geSignUpDraftStatus",async (req,res,next)=>{
+router.get("/getSignUpDraftStatus",async (req,res,next)=>{
     try {
         let user = await User.findOne({userName: req.param("userName")})
         let sSignUpDraft=[]
         if(user.sDraft.length !== 0){
             for ( let draft of user.sDraft){
-                if(draft.signUpContent !== ''){
+                if(draft.signUpContent !== '' && draft.signUpContent){
                     let projectDraft ={
                         projectId:draft.projectId
                     }
@@ -75,7 +75,7 @@ router.get("/getSDraft",async (req,res,next)=>{
         res.json({status: "1", msg: err.message});
     }
 })
-//用户填写报名信息时的自动保存
+//学生报名草稿的自动保存
 router.post("/signUpSave", async (req, res, next) => {
     try {
         if( !req.body.projectId ){
@@ -84,7 +84,7 @@ router.post("/signUpSave", async (req, res, next) => {
         let user = await User.findOne({userName: req.body.userName})
         let exist = false
         for (let project of user.sDraft) {
-            if (project.projectId == req.body.projectId)
+            if (project.projectId == req.body.projectId && project.signUpContent !== '')
                 exist = true
         }
         if (exist) {

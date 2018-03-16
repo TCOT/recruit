@@ -6,12 +6,18 @@
             </div>
             <el-card class="projectDet">
                 <div slot="header" class="clearfix">
-                    <span>{{projectName}}</span>
+                    <span>{{project.projectName}}</span>
                 </div>
                 <div class="text item">
-                    <div v-html='projectContent' style="text-align:left;"></div>
+                    <div v-html='project.projectContent' style="text-align:left;"></div>
                 </div>
             </el-card>
+            <div style="display: flex;align-items: center;margin: 15px 0 0 0;">
+                <span style="margin-right: 10px">报名时间:</span>
+                <el-tag>{{project.signUpTime && project.signUpTime[0]}}</el-tag>
+                <span style="margin: 0 10px">至</span>
+                <el-tag>{{project.signUpTime && project.signUpTime[1]}}</el-tag>
+            </div>
             <div v-if="signUpStatus==true">
                 <div style="display: flex;padding: 10px 0;">
                     <span style="display: flex;align-items: center;">报名信息:</span>
@@ -28,7 +34,7 @@
                     </div>
                 </el-card>
             </div>
-            <div v-if="signUpStatus==false">
+            <div v-if="signUpStatus==false && nowTime==true">
                 <div style="display: flex;align-items: center;">
                     <p class="prompt-text" style="text-align: left"><span
                             class="prompt-icon">*</span>请填写报名信息：</p>
@@ -42,12 +48,13 @@
                         :options="editorOption"
                         @change="onEditorChange">
                 </quill-editor>
-                <div class="html ql-editor" style="font-size: 16px;text-align: left;width: 800px"
-                     v-html="signUpDraftContent"></div>
             </div>
-            <el-button v-if="signUpStatus==false" type="primary" icon="el-icon-edit-outline" style="margin-top: 30px;font-size: 16px;
-                display: inline-block;float: left;" @click="signUp">
+            <el-button v-if="signUpStatus==false && nowTime==true" type="primary" icon="el-icon-edit-outline" style="margin-top: 30px;font-size: 16px;
+                display: inline-block;float: left;" :loading="signUpFlag" @click="signUp">
                 报名
+            </el-button>
+            <el-button v-if="nowTime == false" type="danger" disabled style="margin-top: 30px;font-size: 16px;
+                display: inline-block;float: left;">报名已结束
             </el-button>
             <el-button v-if="signUpStatus==true" type="success" disabled style="margin-top: 30px;font-size: 16px;
                 display: inline-block;float: left;">已报名
@@ -91,11 +98,14 @@
         data() {
             return {
                 timeOut: 0,
+                nowTime: '',
                 signUpDraftContent: '',
                 projectName: '',
                 projectContent: '',
                 signUpContent: '',
+                project: {},
                 loading: true,
+                signUpFlag:false,
                 last: false,
                 first: false,
                 saveInfo: '',
@@ -129,6 +139,7 @@
                     }).then(() => {
                         this.last = true
                         this.saveInfo = '最近保存 ' + hour + ':' + minute
+                        this.signUpFlag = false
                     })
                 }
                 catch (err) {
@@ -139,11 +150,16 @@
                 this.last = false
                 this.first = true
                 this.saveInfo = '正在保存...'
+                this.signUpFlag = true
                 this.debounceChange()
             },
             init() {
                 this.loading = true
                 this.signUpStatus = false
+                let year = new Date().getFullYear()
+                let month = new Date().getMonth() + 1
+                let day = new Date().getDate()
+                let time = year.toString() + month.toString() + day.toString()
                 axios.get('/projects/sGetSignUpContentInit', {
                     params: {
                         userName: this.$store.state.nickName,
@@ -154,13 +170,18 @@
                     if (res.status == "0") {
                         this.checkedStatus = res.result.checkedStatus
                         this.signUpStatus = res.result.signUpStatus
-                        this.projectContent = res.result.project.projectContent
-                        this.projectName = res.result.project.projectName
+                        this.project = res.result.project
                         this.SignUpContent = res.result.SignUpContent
                         this.signUpDraftContent = res.result.signUpDraftContent
-                        this.loading = false
                     }
+                    if (time <= this.project.signUpTime[1].replace(/-/g, '')) {
+                        this.nowTime = true
+                    } else {
+                        this.nowTime = false
+                    }
+                    this.loading = false
                 })
+
             },
             backToList() {
                 this.$router.push("/sindex/sprojects")

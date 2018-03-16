@@ -5,12 +5,18 @@
                 <el-card class="projectContent" style="margin: 5px 10px 5px 10px"
                          v-loading="loading">
                     <div slot="header" class="clearfix">
-                        <span>{{projectName}}</span>
+                        <span>{{project.projectName}}</span>
                     </div>
                     <div class="text item">
-                        <div v-html='projectContent' style="text-align: left"></div>
+                        <div v-html='project.projectContent' style="text-align: left"></div>
                     </div>
                 </el-card>
+                <div style="display: flex;align-items: center;margin: 15px 10px;">
+                    <span style="margin-right: 10px">报名期限:</span>
+                    <el-tag>{{project.signUpTime[0]}}</el-tag>
+                    <span style="margin: 0 10px">至</span>
+                    <el-tag>{{project.signUpTime[1]}}</el-tag>
+                </div>
             </el-tab-pane>
             <el-tab-pane label="报名人员" name="second">
                 <div v-if="this.detailFlag == false">
@@ -278,6 +284,7 @@
     import Quill from 'quill'
     import _ from 'lodash'
     import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
+
     Quill.register('modules/ImageExtend', ImageExtend)
     import axios from 'axios'
 
@@ -286,8 +293,7 @@
             return {
                 filters: {},
                 reamrk: '',
-                projectName: '',
-                projectContent: '',
+                project: {},
                 loading: false,
                 students: [],
                 noCheckedUserInfo: {},
@@ -311,8 +317,7 @@
                 order: '',
                 editorOption: {
                     modules: {
-                        ImageExtend: {
-                        },
+                        ImageExtend: {},
                         imageResize: {},
                         toolbar: {
                             container: container
@@ -465,7 +470,7 @@
                 this.saveInfo = '正在保存...'
                 this.debounceChange(this)
             },
-            debounceChange: _.debounce( (self)=> {
+            debounceChange: _.debounce((self) => {
                 let date = new Date();
                 let hour = date.getHours();
                 let minute = date.getMinutes();
@@ -476,7 +481,7 @@
                     projectId: self.$route.params.projectId,
                     remarks: self.stuDetailInfo.remarks
                 })
-            },2000),
+            }, 2000),
             cellClick(row, column, cell, event) {
                 this.first = false
                 if (column.property == 'name') {
@@ -580,8 +585,7 @@
                 }).then((response) => {
                     let res = response.data;
                     if (res.status == "0") {
-                        this.projectContent = res.result.project.projectContent
-                        this.projectName = res.result.project.projectName
+                        this.project = res.result.project
                         this.loading = false
                     }
                 })
@@ -646,7 +650,7 @@
 </script>
 
 <style>
-    .ql-editor pre{
+    .ql-editor pre {
         padding: 5px 10px;
         background-color: #23241f;
         color: #f8f8f2;
@@ -656,6 +660,7 @@
         margin-top: 5px;
         border-radius: 3px;
     }
+
     .el-table td, .el-table th.is-leaf {
         border-bottom: 0.1px solid #ebeef5;
     }

@@ -4,7 +4,7 @@ var projectSchema = new mongoose.Schema({
     "publisher":String,
     "projectId": String,
     "projectName": String,
-    "releaseTime":String,
+    "signUpTime":Array,
     "projectContent":String,
     "students":Array,
     "stuNum":Number

@@ -8,7 +8,7 @@
                 <el-table-column
                         label="发布日期" width="180">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.releaseTime }}</span>
+                        <span>{{ scope.row.signUpTime[0] }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column

@@ -318,6 +318,7 @@ router.get("/sGetSignUpContentInit", async (req, res, next) => {
 router.get("/aGetProjectDetail", async (req, res, next) => {
     try {
         let project = await Project.findOne({projectId: req.param("projectId")})
+        console.log(project)
         res.json({
             status: '0',
             msg: '',
@@ -405,7 +406,7 @@ router.get("/getProjects", async (req, res, next) => {
             let item = {
                 projectId: project.projectId,
                 publisher: project.publisher,
-                releaseTime: project.releaseTime,
+                signUpTime: project.signUpTime,
                 projectName: project.projectName,
                 draftStatus: false
             }
@@ -413,7 +414,7 @@ router.get("/getProjects", async (req, res, next) => {
         }
         let user = await User.findOne({userName: req.param("userName")})
         for (let draft of user.sDraft) {
-            if (draft.signUpContent !== '') {
+            if (draft.signUpContent !== '' && draft.signUpContent) {
                 for (let project of sendProjects) {
                     if (project.projectId == draft.projectId) {
                         project.draftStatus = true
@@ -453,7 +454,6 @@ router.post("/publish", async (req, res, next) => {
         var r1 = Math.floor(Math.random() * 10);
         var r2 = Math.floor(Math.random() * 10);
         var sysDate = new Date().Format('yyyyMMddhhmmss')
-        var createDate = new Date().Format('yyyy-MM-dd');
         var project = mongoose.model("Project");
         var newProject = new project
         ({
@@ -461,7 +461,7 @@ router.post("/publish", async (req, res, next) => {
             projectContent: req.body.projectContent,
             projectId: platform + r1 + sysDate + r2,
             publisher: req.body.userName,
-            releaseTime: createDate,
+            signUpTime:req.body.signUpTime,
             stuNum: 0,
             students: []
         })
