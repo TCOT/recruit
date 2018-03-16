@@ -11,13 +11,14 @@
                         <div v-html='project.projectContent' style="text-align: left"></div>
                     </div>
                 </el-card>
-                <div style="display: flex;align-items: center;margin: 15px 10px;">
-                    <span style="margin-right: 10px">报名期限:</span>
+                <div style="display: flex;align-items: center;margin: 15px 10px;margin-bottom: 300px">
+                    <span style="margin-right: 10px">报名时间:</span>
                     <el-tag>{{project.signUpTime[0]}}</el-tag>
                     <span style="margin: 0 10px">至</span>
                     <el-tag>{{project.signUpTime[1]}}</el-tag>
                 </div>
             </el-tab-pane>
+
             <el-tab-pane label="报名人员" name="second">
                 <div v-if="this.detailFlag == false">
                     <el-table class="studentsList" :data="filterData"
@@ -201,79 +202,6 @@
                             <el-button type="primary" @click="toStuList">返回列表</el-button>
                         </div>
                     </div>
-                </div>
-            </el-tab-pane>
-            <el-tab-pane label="未审核" name="third">
-                <div v-if="allstudentsChecked == false" class="noCheckedWrapper"
-                     v-loading="loading"
-                     style="margin-bottom: 250px">
-                    <el-card style="flex-wrap: wrap;margin: 5px 10px 5px 10px;padding: 0px">
-                        <div style="display: flex;width:660px;justify-content: space-between ">
-                            <div style="width: 330px;display: flex;margin-bottom: 20px">
-                                姓名：{{noCheckedUserInfo.name}}
-                            </div>
-                            <div style="width: 330px;display: flex;margin-bottom: 20px">
-                                学号：{{noCheckedUserInfo.userName}}
-                            </div>
-                        </div>
-                        <div style="display: flex;width:660px;justify-content: space-between ">
-                            <div style="width: 330px;display: flex;margin-bottom: 20px">
-                                性别：{{noCheckedUserInfo.sex}}
-                            </div>
-                            <div style="width: 330px;display: flex;margin-bottom: 20px">
-                                专业：{{noCheckedUserInfo.major}}
-                            </div>
-                        </div>
-                        <div style="display: flex;width:660px;justify-content: space-between ">
-                            <div style="width: 330px;display: flex;margin-bottom: 20px">
-                                班级：{{noCheckedUserInfo.classNum}}
-                            </div>
-                            <div style="width: 330px;display: flex;margin-bottom: 20px">
-                                QQ号码：{{noCheckedUserInfo.qqNum}}
-                            </div>
-                        </div>
-                        <div style="display: flex;width:660px;justify-content: space-between ">
-                            <div style="width: 330px;display: flex;margin-bottom: 20px">
-                                手机号码：{{noCheckedUserInfo.phoneNum}}
-                            </div>
-                        </div>
-
-                    </el-card>
-                    <el-card style="flex-wrap: wrap;margin: 5px 10px 5px 10px;padding: 0px">
-                        <div style="text-align: left">
-                            <div v-html='noCheckedUserContent'></div>
-                        </div>
-                    </el-card>
-                    <div>
-                        <div style="text-align: left;margin: 10px 0 10px 10px">
-                        <span>
-                            备注信息：
-                        </span>
-                        </div>
-                        <div>
-                            <quill-editor style="margin-left: 10px;margin-right: 9px;"
-                                          ref="myTextEditor"
-                                          v-model="checkRemark"
-                                          :options="editorOption"
-                                          @change="onEditorChange">
-                            </quill-editor>
-                        </div>
-                    </div>
-                    <div style="margin-top: 15px;display: flex;margin-left: 10px">
-                        <el-button type="success"
-                                   size="medium"
-                                   @click="pass">通过
-                        </el-button>
-                        <el-button
-                                size="medium"
-                                type="danger"
-                                @click="">拒绝
-                        </el-button>
-                    </div>
-                </div>
-                <div v-else-if="allstudentsChecked == true" style="margin-left:300px;
-                margin-top:135px;">
-                    <i class="el-icon-success" style="margin-right: 5px"></i>所有人均已审核
                 </div>
             </el-tab-pane>
         </el-tabs>
@@ -620,28 +548,9 @@
                             this.students = res.result.students;
                             this.total = res.result.total
                             this.handleCurrentChange(1, this.students)
-                        }
-                        this.loading = false
-                    })
-                }
-                if (tab.name == 'third') {
-                    this.loading = true
-                    axios.get("/projects/getNoCheckedUser", {
-                        params: {
-                            projectId: this.$route.params.projectId
-                        }
-                    }).then((response) => {
-                        var res = response.data;
-                        if (res.status == "0") {
-                            this.allstudentsChecked = false
-                            this.noCheckedUserInfo = res.result.noCheckedUser;
-                            this.noCheckedUserContent = res.result.noCheckedUserSignUpContent
                             this.loading = false
                         }
-                        if (res.status == "1") {
-                            this.allstudentsChecked = true
-                            this.loading = false
-                        }
+
                     })
                 }
             }

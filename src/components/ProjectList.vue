@@ -52,9 +52,9 @@
             this.init()
         },
         methods: {
-            init() {
+            async init() {
                 this.loading = true
-                axios.get("projects/getAProjects", {}).then((response) => {
+                await axios.get("projects/getAProjects", {}).then((response) => {
                     var res = response.data;
                     if (res.status == "0") {
                         this.projects = res.result.list;

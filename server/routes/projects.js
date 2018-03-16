@@ -252,6 +252,7 @@ router.get("/getStudentsList", async (req, res, next) => {
 router.get("/getAProjects", async (req, res, next) => {
     try {
         let projects = await Project.find()
+        console.log(projects)
         res.json({
             status: '0',
             msg: '',

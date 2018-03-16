@@ -39,21 +39,14 @@ const store = new Vuex.Store({
         },
         //更新报名草稿显示图标
         updateSignUpDraft(state,obj){
-            console.log("---进入---")
             if(obj.status == 'delete'){
-                console.log("进入delete，此时数组长度为")
-                console.log(state.signUpDraft.length)
                 for(let item of state.signUpDraft ){
                     if(item.projectId == obj.projectId){
                         state.signUpDraft.pop(item)
                     }
                 }
-                console.log("退出delete,此时数组长度为")
-                console.log(state.signUpDraft.length)
             }
             if(obj.status == 'keep'){
-                console.log("进入keep,此时数组长度为：")
-                console.log(state.signUpDraft.length)
                 for(let item of state.signUpDraft ){
                     if (item.projectId == obj.projectId){
                         return
@@ -63,10 +56,7 @@ const store = new Vuex.Store({
                     projectId :obj.projectId
                 }
                 state.signUpDraft.push(addProject)
-                console.log("退出keep,此时数组长度为")
-                console.log(state.signUpDraft.length)
             }
-            console.log("---退出---")
         }
     }
 });
