@@ -78,6 +78,9 @@ router.get("/getSDraft",async (req,res,next)=>{
 //用户填写报名信息时的自动保存
 router.post("/signUpSave", async (req, res, next) => {
     try {
+        if( !req.body.projectId ){
+            return
+        }
         let user = await User.findOne({userName: req.body.userName})
         let exist = false
         for (let project of user.sDraft) {
@@ -100,6 +103,7 @@ router.post("/signUpSave", async (req, res, next) => {
                 projectId: req.body.projectId,
                 signUpContent: req.body.signUpDraftContent
             }
+            console.log(projectDraft)
             user.sDraft.push(projectDraft)
             await user.save()
         }

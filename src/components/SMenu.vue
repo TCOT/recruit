@@ -31,8 +31,6 @@
         computed: {
             hidden() {
                 if(this.$store.state.signUpDraft.length !== 0){
-                    console.log("to hidden")
-                    console.log(this.$store.state.signUpDraft.length)
                     return false
                 }
                 return true
@@ -43,7 +41,6 @@
         },
         methods: {
             init() {
-                console.log("进入menu init 方法")
                 axios.get("/users/geSignUpDraftStatus", {
                     params: {
                         userName: this.$store.state.nickName
@@ -52,9 +49,6 @@
                     var res = response.data;
                     if (res.status == "0") {
                         this.$store.state.signUpDraft = res.result.signUpDraft
-                        console.log("即将退出menu init方法，signUpDraft数组长度为："+this.$store.state.signUpDraft.length)
-                        console.log("signUpDraft数组内容为")
-                        console.log(this.$store.state.signUpDraft)
                     }
                 })
                 this.$router.push("/sindex/sinfo")

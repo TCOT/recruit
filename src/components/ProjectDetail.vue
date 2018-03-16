@@ -60,8 +60,7 @@
                                          label="状态"
                                          prop="status"
                                          :filters="[{ text: '未审核', value: '未审核' }, { text: '已通过',
-                                     value:'已通过'},{text:'已拒绝',value:'已拒绝'}]"
-                                         :filter-method="filterTag">
+                                     value:'已通过'},{text:'已拒绝',value:'已拒绝'}]">
                             <template slot-scope="scope">
                                 <el-tag :type="scope.row.status == '未审核'?'info':
                             ( scope.row.status=='已通过'?'success':'danger')  ">{{scope.row.status}}
@@ -82,7 +81,7 @@
                     <div class="block" style="margin-top: 10px">
                         <el-pagination
                                 background
-                                page-size="5"
+                                :page-size="5"
                                 @current-change="handleCurrentChange"
                                 layout="total,prev, pager, next"
                                 :total="total">
@@ -300,7 +299,6 @@
                 checkedFlag: 0,
                 thePageStudents: [],
                 theFilterStudents: [],
-                filteFlag: false,
                 detailFlag: false,
                 stuDetailInfo: {},
                 remark: '',

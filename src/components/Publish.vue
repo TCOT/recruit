@@ -12,7 +12,7 @@
                           v-model="draft.title"></el-input>
                 <div style="display: flex;margin: 5px 5px 5px 0;">
                     <p style="text-align: left;margin: 5px 0 10px 0;">正文：{{courier}}</p>
-                    <el-tag :type="last == true?'success':'' " v-if=" first == true ">{{saveInfo}}
+                    <el-tag :type="last == true?'success':'' "  v-if=" first == true ">{{saveInfo}}
                     </el-tag>
                 </div>
                 <quill-editor
@@ -21,12 +21,12 @@
                         :options="editorOption"
                         @change="onEditorChange">
                 </quill-editor>
-                <div class="html ql-editor" style="font-size: 16px;width: 850px"
-                     v-html="draft.content"></div>
             </div>
             <div style="float:left;margin-top: 10px;margin-bottom: 250px">
                 <el-button type="success" @click="submit">发布</el-button>
             </div>
+        </div>
+        <div style="margin-bottom: 300px">
         </div>
     </div>
 </template>

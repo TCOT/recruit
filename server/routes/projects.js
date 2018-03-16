@@ -18,7 +18,6 @@ mongoose.connection.on("disconnected", function () {
 //项目发布自动保存
 router.post("/publishSave", async (req, res, next) => {
     try {
-        console.log(req.body.userName)
         User.update({'userName': req.body.userName},
             {
                 '$set': {
@@ -27,7 +26,6 @@ router.post("/publishSave", async (req, res, next) => {
                 }
             }, (err) => {
             })
-        console.log(req.body.title)
         res.json({
             status: '0',
             msg: ''
@@ -254,7 +252,6 @@ router.get("/getStudentsList", async (req, res, next) => {
 router.get("/getAProjects", async (req, res, next) => {
     try {
         let projects = await Project.find()
-        console.log(projects)
         res.json({
             status: '0',
             msg: '',
@@ -444,6 +441,7 @@ router.get("/getProjects", async (req, res, next) => {
 router.post("/publish", async (req, res, next) => {
     try {
         var platform = '622';
+        let user = await User.findOne({userName:req.body.userName})
         await User.update({'userName': req.body.userName},
             {
                 '$set': {
@@ -452,7 +450,6 @@ router.post("/publish", async (req, res, next) => {
                 }
             }, (err) => {
             })
-        console.log(user.draft)
         var r1 = Math.floor(Math.random() * 10);
         var r2 = Math.floor(Math.random() * 10);
         var sysDate = new Date().Format('yyyyMMddhhmmss')
