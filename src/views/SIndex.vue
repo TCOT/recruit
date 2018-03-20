@@ -1,5 +1,5 @@
 <template>
-    <div class="index">
+    <div class="wrapSIndex">
         <div style="min-height: calc(100vh - 50px);">
             <s-header></s-header>
             <div class="smain">
@@ -44,14 +44,16 @@
     }
 </script>
 
-<style>
-    .smain {
-        display: flex;
-        position: relative;
-        box-align: start;
-        align-items: flex-start;
-        width: 1200px;
-        padding: 0 16px;
-        margin: 10px auto;
+<style lang="scss">
+    .wrapSIndex {
+        .smain {
+            display: flex;
+            position: relative;
+            box-align: start;
+            align-items: flex-start;
+            width: 1200px;
+            padding: 0 16px;
+            margin: 10px auto;
+        }
     }
 </style>

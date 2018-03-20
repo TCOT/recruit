@@ -1,5 +1,5 @@
 <template>
-    <div class="index">
+    <div class="wrapAIndex">
         <div style="min-height: calc(100vh - 50px);">
             <a-header></a-header>
             <div class="amain">
@@ -32,14 +32,16 @@
 
 </script>
 
-<style>
-    .amain {
-        display: flex;
-        position: relative;
-        box-align: start;
-        align-items: flex-start;
-        width: 1200px;
-        padding: 0 16px;
-        margin: 10px auto;
+<style lang="scss">
+    .wrapAIndex {
+        .amain {
+            display: flex;
+            position: relative;
+            box-align: start;
+            align-items: flex-start;
+            width: 1200px;
+            padding: 0 16px;
+            margin: 10px auto;
+        }
     }
 </style>

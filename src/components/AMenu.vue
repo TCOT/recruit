@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapAMenu">
         <el-col :span="12">
             <el-menu
                     default-active="1"
@@ -9,7 +9,7 @@
                     <span slot="title" style="font-size: 16px;">项目详情</span>
                 </el-menu-item>
                 <el-badge value="new" :hidden="hidden">
-                    <el-menu-item index="2" @click="select(2)" >
+                    <el-menu-item index="2" @click="select(2)">
                         <i class="el-icon-edit-outline" style="font-size: 24px"></i>
                         <span slot="title" style="font-size: 16px;">发布项目</span>
                     </el-menu-item>
@@ -21,28 +21,29 @@
 
 <script>
     import axios from 'axios'
+
     export default {
         mounted() {
             this.init()
         },
         computed: {
-            hidden(){
+            hidden() {
                 return !this.$store.state.draft
             }
         },
         methods: {
             init() {
-                axios.get("/users/getDraft",{
+                axios.get("/users/getDraft", {
                     params: {
                         userName: this.$store.state.nickName
                     }
                 }).then((response) => {
                     var res = response.data;
                     if (res.status == "0") {
-                        if( res.result.projectDraft.title !== '' ||
-                            res.result.projectDraft.content !== ''){
+                        if (res.result.projectDraft.title !== '' ||
+                            res.result.projectDraft.content !== '') {
                             this.$store.commit("updateDraft", true)
-                        }else {
+                        } else {
                             this.$store.commit("updateDraft", false)
                         }
                     }
@@ -62,14 +63,15 @@
     }
 </script>
 
-<style>
-    .el-badge__content.is-fixed{
-        margin-right: 13px;
-        margin-top: 10px;
-    }
-    .el-col-12 {
-        width: 100%;
-        margin-top: 130px;
-
+<style lang="scss">
+    .wrapAMenu {
+        .el-badge__content.is-fixed {
+            margin-right: 13px;
+            margin-top: 10px;
+        }
+        .el-col-12 {
+            width: 100%;
+            margin-top: 130px;
+        }
     }
 </style>

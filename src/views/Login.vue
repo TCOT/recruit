@@ -1,68 +1,71 @@
 <template>
-    <div class="top">
-        <div class="loginPage-contetn">
-            <el-card class="loginCard">
-                <el-tabs>
-                    <el-tab-pane label="登陆" style="display: block">
-                        <el-form :model="ruleForm1" :rules="rules1" ref="ruleForm1" label-width="100px">
-                            <el-form-item label="学号" prop="userName" inline-message>
-                                <el-input   clearable
-                                        auto-complete="off"  v-model="ruleForm1.userName" placeholder="请输入学号"
-                                          style="width: 200px;"></el-input>
-                            </el-form-item>
-                            <el-form-item label="密码" prop="userPwd">
-                                <el-input type="password" v-model="ruleForm1.userPwd" @keyup.enter="login"
-                                          placeholder="请输入密码"
-                                          style="width: 200px;"
-                                          clearable></el-input>
-                            </el-form-item>
-                            <div class="a" style="text-align: left">
-                                <el-button type="primary" size="medium" @click="login"
-                                           style="">登入
-                                </el-button>
-                                <el-switch
-                                        style="margin-left: 30px"
-                                        v-model="rememberMe"
-                                        active-color="#13ce66"
-                                        inactive-color="#dcdfe6">
-                                </el-switch>
-                                记住我
-                            </div>
-                        </el-form>
-                    </el-tab-pane>
-                    <el-tab-pane label="注册">
-                        <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px"
-                                 class="demo-ruleForm">
-                            <el-form-item  label="学号" prop="userName2" style="text-align: left">
-                                <el-input
-                                        v-model="ruleForm2.userName2"
-                                        style="width: 200px;"
-                                        placeholder="请输入学号" auto-complete="off" @keyup=""></el-input>
-                            </el-form-item>
-                            <el-form-item label="密码" prop="pass" style="text-align: left">
-                                <el-input placeholder="请输入密码"
-                                          style="width: 200px;"
-                                          type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
-                            </el-form-item>
-                            <el-form-item label="确认密码" prop="checkPass" style="text-align: left">
-                                <el-input placeholder="请确认学号" style="width: 200px;"
-                                          type="password" v-model="ruleForm2.checkPass" auto-complete="off"></el-input>
-                            </el-form-item>
+    <div class="wrapLogin">
+        <div class="top">
+            <div class="loginPage-contetn">
+                <el-card class="loginCard">
+                    <el-tabs>
+                        <el-tab-pane label="登陆" style="display: block">
+                            <el-form :model="ruleForm1" :rules="rules1" ref="ruleForm1" label-width="100px">
+                                <el-form-item label="学号" prop="userName" inline-message>
+                                    <el-input clearable
+                                              auto-complete="off" v-model="ruleForm1.userName" placeholder="请输入学号"
+                                              style="width: 200px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="密码" prop="userPwd">
+                                    <el-input type="password" v-model="ruleForm1.userPwd" @keyup.enter="login"
+                                              placeholder="请输入密码"
+                                              style="width: 200px;"
+                                              clearable></el-input>
+                                </el-form-item>
+                                <div class="a" style="text-align: left">
+                                    <el-button type="primary" size="medium" @click="login"
+                                               style="">登入
+                                    </el-button>
+                                    <el-switch
+                                            style="margin-left: 30px"
+                                            v-model="rememberMe"
+                                            active-color="#13ce66"
+                                            inactive-color="#dcdfe6">
+                                    </el-switch>
+                                    记住我
+                                </div>
+                            </el-form>
+                        </el-tab-pane>
+                        <el-tab-pane label="注册">
+                            <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px"
+                                     class="demo-ruleForm">
+                                <el-form-item label="学号" prop="userName2" style="text-align: left">
+                                    <el-input
+                                            v-model="ruleForm2.userName2"
+                                            style="width: 200px;"
+                                            placeholder="请输入学号" auto-complete="off" @keyup=""></el-input>
+                                </el-form-item>
+                                <el-form-item label="密码" prop="pass" style="text-align: left">
+                                    <el-input placeholder="请输入密码"
+                                              style="width: 200px;"
+                                              type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="确认密码" prop="checkPass" style="text-align: left">
+                                    <el-input placeholder="请确认学号" style="width: 200px;"
+                                              type="password" v-model="ruleForm2.checkPass"
+                                              auto-complete="off"></el-input>
+                                </el-form-item>
 
-                            <div class="b" style="text-align: left;margin-top: 30px">
-                                <el-button type="primary" @click="register">注册</el-button>
-                                <el-button @click="resetForm('ruleForm2')">清空</el-button>
-                            </div>
-                        </el-form>
-                    </el-tab-pane>
-                </el-tabs>
-            </el-card>
-        </div>
-        <a-footer style="position: fixed;
+                                <div class="b" style="text-align: left;margin-top: 30px">
+                                    <el-button type="primary" @click="register">注册</el-button>
+                                    <el-button @click="resetForm('ruleForm2')">清空</el-button>
+                                </div>
+                            </el-form>
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-card>
+            </div>
+            <a-footer style="position: fixed;
     left: 0;
     bottom: 0;
     right: 0;
     margin: 0 auto;"></a-footer>
+        </div>
     </div>
 
 </template>
@@ -136,7 +139,7 @@
                 flag1: false,
                 flag2: false,
                 flag3: false,
-                ruleForm1:{
+                ruleForm1: {
                     userName: '',
                     userPwd: '',
                 },
@@ -145,11 +148,11 @@
                     pass: '',
                     checkPass: '',
                 },
-                rules1:{
-                    userName:[
+                rules1: {
+                    userName: [
                         {validator: chaeckUserName1, trigger: 'change'}
                     ],
-                    userPwd:[
+                    userPwd: [
                         {validator: validatePass1, trigger: 'change'}
                     ]
                 },
@@ -246,48 +249,53 @@
                 });
             }
         },
-        components:{
+        components: {
             AFooter
         }
     }
 </script>
 
-<style>
-    .loginPage-contetn {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border-radius: 2px;
-        min-height: 688px;
-        height: calc(100% - 42px);
-        box-sizing: border-box;
-    }
-    .el-tabs__content{
-        display: flex;
-    }
-    .el-form-item__label {
-        font-size: 18px;
-        color: #1a1a1a;
-        text-align: left;
-    }
-    .el-tabs__item{
-        font-size: 17px;
-    }
+<style lang="scss">
+    .wrapLogin {
+        .loginPage-contetn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+            min-height: 688px;
+            height: calc(100% - 42px);
+            box-sizing: border-box;
+        }
 
-    .top {
-        background-image: url(./../assets/0.png);
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-        background-size: cover;
-        width: 100%;
-        height: 100vh;
-    }
+        .el-tabs__content {
+            display: flex;
+        }
 
-    .loginCard{
-        width: 432px;
-        height: 350px;
-        margin-bottom: 160px;
+        .el-form-item__label {
+            font-size: 18px;
+            color: #1a1a1a;
+            text-align: left;
+        }
+
+        .el-tabs__item {
+            font-size: 17px;
+        }
+
+        .top {
+            background-image: url(./../assets/0.png);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .loginCard {
+            width: 432px;
+            height: 350px;
+            margin-bottom: 160px;
+        }
     }
 </style>

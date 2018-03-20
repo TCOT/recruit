@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapPublish">
         <div class="editorWrapper" style="width: 850px;
              margin-left: 70px;
                  margin-top: 70px;" v-loading="loading">
@@ -47,7 +47,7 @@
 
 <script>
     import Quill from 'quill'
-    import { ImageDrop } from 'quill-image-drop-module';
+    import {ImageDrop} from 'quill-image-drop-module';
     import _ from 'lodash'
     import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
 
@@ -58,9 +58,9 @@
     export default {
         data() {
             return {
-                signUpTime:[],
+                signUpTime: [],
                 loading: false,
-                publishLoading:false,
+                publishLoading: false,
                 draft: {},
                 last: false,
                 first: false,
@@ -150,7 +150,7 @@
                     type: 'success'
                 }).then(() => {
                     axios.post("/projects/publish", {
-                        signUpTime:this.signUpTime,
+                        signUpTime: this.signUpTime,
                         userName: this.$store.state.nickName,
                         projectName: this.draft.title,
                         projectContent: this.draft.content
@@ -174,26 +174,28 @@
     }
 </script>
 
-<style>
-    .ql-editor pre {
-        padding: 5px 10px;
-        background-color: #23241f;
-        color: #f8f8f2;
-        overflow: visible;
-        white-space: pre-wrap;
-        margin-bottom: 5px;
-        margin-top: 5px;
-        border-radius: 3px;
-    }
+<style lang="scss">
+    .wrapPublish {
+        .ql-editor pre {
+            padding: 5px 10px;
+            background-color: #23241f;
+            color: #f8f8f2;
+            overflow: visible;
+            white-space: pre-wrap;
+            margin-bottom: 5px;
+            margin-top: 5px;
+            border-radius: 3px;
+        }
 
-    .ql-container.ql-snow {
-        font-size: 16px;
-    }
+        .ql-container.ql-snow {
+            font-size: 16px;
+        }
 
-    .html {
-        overflow-y: auto;
-        border: 1px solid #ccc;
-        border-top: none;
-        resize: vertical;
+        .html {
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-top: none;
+            resize: vertical;
+        }
     }
 </style>

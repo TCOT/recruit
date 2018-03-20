@@ -1,45 +1,47 @@
 <template>
-    <div style="padding-right: 250px">
-        <el-card class="aProjectList" v-loading="loading">
-            <el-table :data="projects"
-                      class="aProjectTable"
-                      style="width: 100%">
-                <el-table-column
-                        label="项目名称" width="180">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.projectName }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        label="发布人" width="180">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.publisher }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        label="发布日期">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.signUpTime[0] }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        label="已报名人数">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.stuNum }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        prop="address" label="操作">
-                    <template slot-scope="scope">
-                        <el-button type="primary" round icon="el-icon-message"
-                                   size="medium"
-                                   @click="toDetail(scope.$index,scope.row)">详情
-                        </el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </el-card>
-        <div style="margin-bottom: 300px">
+    <div class="wrapProjectList">
+        <div style="padding-right: 250px">
+            <el-card class="aProjectList" v-loading="loading">
+                <el-table :data="projects"
+                          class="aProjectTable"
+                          style="width: 100%">
+                    <el-table-column
+                            label="项目名称" width="180">
+                        <template slot-scope="scope">
+                            <span>{{ scope.row.projectName }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="发布人" width="180">
+                        <template slot-scope="scope">
+                            <span>{{ scope.row.publisher }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="发布日期">
+                        <template slot-scope="scope">
+                            <span>{{ scope.row.signUpTime[0] }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="已报名人数">
+                        <template slot-scope="scope">
+                            <span>{{ scope.row.stuNum }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            prop="address" label="操作">
+                        <template slot-scope="scope">
+                            <el-button type="primary" round icon="el-icon-message"
+                                       size="medium"
+                                       @click="toDetail(scope.$index,scope.row)">详情
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-card>
+            <div style="margin-bottom: 300px">
+            </div>
         </div>
     </div>
 </template>
@@ -69,20 +71,22 @@
         data() {
             return {
                 projects: [],
-                loading:true
+                loading: true
             }
         }
     }
 </script>
 
-<style>
-    .aProjectTable{
-        text-align: left;
-    }
-    .aProjectList{
-        width: 800px;
-        height: 400px;
-        margin-top: 100px;
-        margin-left: 70px;
+<style lang="scss">
+    .wrapProjectList {
+        .aProjectTable {
+            text-align: left;
+        }
+        .aProjectList {
+            width: 800px;
+            height: 400px;
+            margin-top: 100px;
+            margin-left: 70px;
+        }
     }
 </style>

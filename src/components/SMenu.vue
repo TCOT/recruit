@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapSMenu">
         <el-col :span="12">
             <el-menu
                     default-active="1"
@@ -23,14 +23,14 @@
     import axios from 'axios'
 
     export default {
-        data(){
-            return{
-                signUpDraft:[]
+        data() {
+            return {
+                signUpDraft: []
             }
         },
         computed: {
             hidden() {
-                if(this.$store.state.signUpDraft.length !== 0){
+                if (this.$store.state.signUpDraft.length !== 0) {
                     return false
                 }
                 return true
@@ -64,9 +64,11 @@
     }
 </script>
 
-<style>
-    .el-col-12 {
-        width: 100%;
-        margin-top: 150px;
+<style lang="scss">
+    .wrapSMenu {
+        .el-col-12 {
+            width: 100%;
+            margin-top: 150px;
+        }
     }
 </style>
