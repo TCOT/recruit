@@ -88,6 +88,7 @@
                         </el-table>
                         <div class="block" style="margin-top: 10px">
                             <el-pagination
+                                    :current-page.sync="page"
                                     background
                                     :page-size="5"
                                     @current-change="handleCurrentChange"
@@ -292,9 +293,11 @@
             sortRateDes(a, b) {
                 return b.rate - a.rate
             },
+            //更改排序规则
             sortChange({column, prop, order}) {
                 this.order = order
             },
+            //列表进行评分
             listRateChange(index, row) {
                 this.$message({
                     type: 'success',
@@ -312,6 +315,7 @@
                     }
                 })
             },
+            //报名人员详情页评分
             rateChange(rate) {
                 this.$message({
                     type: 'success',
@@ -330,9 +334,11 @@
                     }
                 })
             },
+            //由详情页转换到报名学生列表
             toStuList() {
                 this.detailFlag = false
             },
+            //详情页选择下一位学生
             getNextStu() {
                 this.loading = true
                 let nextIndex
@@ -363,6 +369,7 @@
                     }
                 })
             },
+            //详情页拒绝一位学生
             stuDetailRefuse() {
                 axios.post("/projects/refuseSomeone", {
                     userName: this.stuDetailInfo.userName,
@@ -380,6 +387,7 @@
                     }
                 })
             },
+            //详情页通过一位学生
             stuDetailPass() {
                 axios.post("/projects/passSomeone", {
                     userName: this.stuDetailInfo.userName,
@@ -397,6 +405,7 @@
                     }
                 })
             },
+            //自动保存备注
             onEditorChange() {
                 this.last = false
                 this.first = true
@@ -415,6 +424,7 @@
                     remarks: self.stuDetailInfo.remarks
                 })
             }, 2000),
+            //报名学生列表进入详情页
             cellClick(row, column, cell, event) {
                 this.first = false
                 if (column.property == 'name') {
@@ -435,12 +445,15 @@
 
                 }
             },
+            //过滤规则
             filterChange(filters) {
                 this.filters = filters
             },
+            //处理分页
             handleCurrentChange(page) {
                 this.page = page
             },
+            //列表拒绝某一位同学
             handleRefuse(index, row) {
                 this.$confirm('确定拒绝此同学吗?', '提示', {
                     confirmButtonText: '确定',
@@ -463,6 +476,7 @@
                 })
 
             },
+            //列表通过某一位同学
             handlePass(index, row) {
                 row.status = '已通过'
                 axios.post("/projects/listPassSomeone", {
@@ -480,35 +494,7 @@
                     }
                 })
             },
-            pass() {
-                axios.post("/projects/passSomeone", {
-                    userName: this.noCheckedUserInfo.userName,
-                    projectId: this.$route.params.projectId,
-                    checkRemark: this.checkRemark
-                }).then((response) => {
-                    let res = response.data
-                    if (res.status == '0') {
-                        this.loading = true
-                        axios.get("/projects/getNoCheckedUser", {
-                            params: {
-                                projectId: this.$route.params.projectId,
-                            }
-                        }).then((response) => {
-                            var res = response.data;
-                            if (res.status == "0") {
-                                this.noCheckedUserInfo = res.result.noCheckedUser;
-                                this.noCheckedUserContent = res.result.noCheckedUserSignUpContent
-                                this.loading = false
-                            }
-                            if (res.status == "1") {
-                                this.allstudentsChecked = true
-                                this.loading = false
-                            }
-
-                        })
-                    }
-                })
-            },
+            //初始化项目详情
             init() {
                 this.loading = true
                 axios.get('/projects/aGetProjectDetail', {
@@ -523,6 +509,7 @@
                     }
                 })
             },
+            //处理标签页点击
             handleClick(tab, event) {
                 if (tab.name == "first") {
                     this.loading = true
@@ -552,7 +539,7 @@
                         if (res.status == "0") {
                             this.students = res.result.students;
                             this.total = res.result.total
-                            this.handleCurrentChange(1, this.students)
+                            this.page = this.page
                             this.loading = false
                         }
 
