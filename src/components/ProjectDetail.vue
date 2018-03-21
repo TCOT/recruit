@@ -88,8 +88,8 @@
                         </el-table>
                         <div class="block" style="margin-top: 10px">
                             <el-pagination
-                                    :current-page.sync="page"
                                     background
+                                    :current-page.sync="page"
                                     :page-size="5"
                                     @current-change="handleCurrentChange"
                                     layout="total,prev, pager, next"
@@ -542,7 +542,6 @@
                             this.page = this.page
                             this.loading = false
                         }
-
                     })
                 }
             }
