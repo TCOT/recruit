@@ -22,7 +22,7 @@
                 <div v-if="signUpStatus==true">
                     <div style="display: flex;padding: 10px 0;">
                         <span style="display: flex;align-items: center;">报名信息:</span>
-                        <el-tag style="margin-left: 30px">审核状态:</el-tag>
+                        <el-tag style="margin-left: 10px">审核状态:</el-tag>
                         <el-tag style="margin-left: 10px;"
                                 :type="checkedStatus == '审核中'?'info':
                             ( checkedStatus=='已通过'?'success':'danger')  ">

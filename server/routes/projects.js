@@ -404,12 +404,17 @@ router.get("/getProjects", async (req, res, next) => {
         let projects = await Project.find()
         let sendProjects = []
         for (let project of projects) {
+            let status
+            let stu = project.students.find(stu => stu.studentUserName == req.param("userName"))
+            status = stu ? stu.checked : ''
             let item = {
                 projectId: project.projectId,
                 publisher: project.publisher,
                 signUpTime: project.signUpTime,
                 projectName: project.projectName,
-                draftStatus: false
+                status:status,
+                draftStatus: false,
+                exceed:false
             }
             sendProjects.push(item)
         }
