@@ -265,7 +265,7 @@
         },
         computed: {
             filterData() {
-                let data = this.students
+                let data = [...this.students]
                 Object.keys(this.filters).forEach(key => {
                     let values = this.filters[key]
                     if (values.length) {
@@ -273,13 +273,13 @@
                     }
                 })
                 this.total = data.length
-                this.nextData = data
                 if (this.order == 'ascending') {
                     data.sort(this.sortRateAsc)
                 }
                 if (this.order == 'descending') {
                     data.sort(this.sortRateDes)
                 }
+                this.nextData = [...data]
                 data = data.slice((this.page - 1) * 5, this.page * 5)
                 return data
             }
@@ -309,10 +309,6 @@
                     userName: row.userName,
                     projectId: this.$route.params.projectId,
                     rate: row.rate
-                }).then((response) => {
-                    let res = response.data
-                    if (res.status == '0') {
-                    }
                 })
             },
             //报名人员详情页评分
@@ -323,6 +319,7 @@
                     duration: 1000,
                     center: true
                 })
+                this.students.find(stu => stu.userName == this.stuDetailInfo.userName).rate = rate
                 axios.post("/projects/rateChange", {
                     userName: this.stuDetailInfo.userName,
                     projectId: this.$route.params.projectId,
@@ -538,6 +535,7 @@
                         var res = response.data;
                         if (res.status == "0") {
                             this.students = res.result.students;
+                            console.log(this.students)
                             this.total = res.result.total
                             this.page = this.page
                             this.loading = false
@@ -551,7 +549,7 @@
 
 <style lang="scss">
     .wrapProjectDetail {
-        .el-table--scrollable-x .el-table__body-wrapper{
+        .el-table--scrollable-x .el-table__body-wrapper {
             overflow: hidden;
         }
         .ql-editor pre {
