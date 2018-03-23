@@ -84,9 +84,10 @@ router.post("/signUpSave", async (req, res, next) => {
         let user = await User.findOne({userName: req.body.userName})
         let exist = false
         for (let project of user.sDraft) {
-            if (project.projectId == req.body.projectId && project.signUpContent !== '')
+            if (project.projectId == req.body.projectId)
                 exist = true
         }
+        console.log(exist)
         if (exist) {
             User.update({
                     'userName': req.body.userName,
@@ -104,7 +105,7 @@ router.post("/signUpSave", async (req, res, next) => {
                 signUpContent: req.body.signUpDraftContent
             }
             console.log(projectDraft)
-            user.sDraft.push(projectDraft)
+            await user.sDraft.push(projectDraft)
             await user.save()
         }
         res.json({

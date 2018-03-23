@@ -420,7 +420,7 @@ router.get("/getProjects", async (req, res, next) => {
         }
         let user = await User.findOne({userName: req.param("userName")})
         for (let draft of user.sDraft) {
-            if (draft.signUpContent !== '' && draft.signUpContent) {
+            if (draft.signUpContent !== '') {
                 for (let project of sendProjects) {
                     if (project.projectId == draft.projectId) {
                         project.draftStatus = true

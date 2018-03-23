@@ -48,7 +48,7 @@
                     </div>
                     <quill-editor
                             style="width: 800px"
-                            ref="myQuillEditor"
+                            ref="myTextEditor"
                             v-model="signUpDraftContent"
                             :options="editorOption"
                             @change="onEditorChange">
@@ -77,8 +77,8 @@
 
 <script>
     import Quill from 'quill'
-    import _ from 'lodash'
     import {ImageDrop} from 'quill-image-drop-module';
+    import _ from 'lodash'
     import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
 
     Quill.register('modules/imageDrop', ImageDrop);
