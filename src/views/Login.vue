@@ -2,6 +2,9 @@
     <div class="wrapLogin">
         <div class="top">
             <div class="loginPage-contetn">
+                <div class="title">
+                    <span style="color: #409EFF;font-size: 20px">信息工程学院项目发布中心</span>
+                </div>
                 <el-card class="loginCard">
                     <el-tabs>
                         <el-tab-pane label="登陆" style="display: block">
@@ -257,6 +260,15 @@
 
 <style lang="scss">
     .wrapLogin {
+        .title{
+            text-align: center;
+            width: 500px;
+            margin: 0 auto;
+            clear: both;
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
         .loginPage-contetn {
             flex: 1;
             display: flex;
