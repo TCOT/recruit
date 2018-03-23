@@ -265,7 +265,7 @@
             width: 500px;
             margin: 0 auto;
             clear: both;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 2px solid #409EFF;
             padding: 10px;
             margin-bottom: 20px;
         }

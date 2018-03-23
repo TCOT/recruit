@@ -3,7 +3,7 @@
         <div style="padding-right: 250px">
             <el-card class="allProjectCard">
                 <el-table v-loading="loading"
-                          :data="projects"
+                          :data="filterData"
                           style="width: 100%"
                           class="listProjectTable">
                     <el-table-column
@@ -49,6 +49,16 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <div class="block" style="margin-top: 10px">
+                    <el-pagination
+                            background
+                            :current-page.sync="page"
+                            :page-size="5"
+                            @current-change="handleCurrentChange"
+                            layout="total,prev, pager, next"
+                            :total="total">
+                    </el-pagination>
+                </div>
             </el-card>
             <div style="margin-bottom: 300px"></div>
         </div>
@@ -62,7 +72,19 @@
         mounted() {
             this.init()
         },
+        computed: {
+            filterData() {
+                let data = [...this.projects]
+                this.total = data.length
+                this.nextData = [...data]
+                data = data.slice((this.page - 1) * 5, this.page * 5)
+                return data
+            }
+        },
         methods: {
+            handleCurrentChange(page){
+                this.page = page
+            },
             init() {
                 this.loading = true
                 let year = new Date().getFullYear()
@@ -94,7 +116,9 @@
         },
         data() {
             return {
+                total:0,
                 time:'',
+                page:0,
                 projects: [],
                 loading: true,
                 hidden: false

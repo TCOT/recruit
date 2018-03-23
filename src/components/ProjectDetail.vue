@@ -19,7 +19,6 @@
                         <el-tag>{{project.signUpTime && project.signUpTime[1]}}</el-tag>
                     </div>
                 </el-tab-pane>
-
                 <el-tab-pane label="报名人员" name="second">
                     <div v-if="this.detailFlag == false">
                         <el-table class="studentsList" :data="filterData"

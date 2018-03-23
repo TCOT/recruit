@@ -2,7 +2,7 @@
     <div class="wrapProjectList">
         <div style="padding-right: 250px">
             <el-card class="aProjectList" v-loading="loading">
-                <el-table :data="projects"
+                <el-table :data="filterData"
                           class="aProjectTable"
                           style="width: 100%">
                     <el-table-column
@@ -39,7 +39,18 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <div class="block" style="margin-top: 30px">
+                    <el-pagination
+                            background
+                            :current-page.sync="page"
+                            :page-size="5"
+                            @current-change="handleCurrentChange"
+                            layout="total,prev, pager, next"
+                            :total="total">
+                    </el-pagination>
+                </div>
             </el-card>
+
             <div style="margin-bottom: 300px">
             </div>
         </div>
@@ -53,7 +64,19 @@
         mounted() {
             this.init()
         },
+        computed: {
+            filterData() {
+                let data = [...this.projects]
+                this.total = data.length
+                this.nextData = [...data]
+                data = data.slice((this.page - 1) * 5, this.page * 5)
+                return data
+            }
+        },
         methods: {
+            handleCurrentChange(page){
+                this.page = page
+            },
             async init() {
                 this.loading = true
                 await axios.get("projects/getAProjects", {}).then((response) => {
@@ -65,11 +88,13 @@
                 this.loading = false
             },
             toDetail(index, row) {
-                this.$router.push('/aindex/project/' + this.projects[index].projectId)
+                this.$router.push('/aindex/project/' + row.projectId)
             }
         },
         data() {
             return {
+                page:0,
+                total:0,
                 projects: [],
                 loading: true
             }
@@ -81,6 +106,7 @@
     .wrapProjectList {
         .aProjectTable {
             text-align: left;
+            height: 351px;
         }
         .aProjectList {
             width: 800px;
