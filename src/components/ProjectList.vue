@@ -84,7 +84,7 @@
         }
         .aProjectList {
             width: 800px;
-            height: 400px;
+            height: 450px;
             margin-top: 100px;
             margin-left: 70px;
         }

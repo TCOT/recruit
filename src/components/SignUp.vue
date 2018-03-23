@@ -23,9 +23,13 @@
                     <div style="display: flex;padding: 10px 0;">
                         <span style="display: flex;align-items: center;">报名信息:</span>
                         <el-tag style="margin-left: 10px">审核状态:</el-tag>
-                        <el-tag style="margin-left: 10px;"
-                                :type="checkedStatus == '审核中'?'info':
-                            ( checkedStatus=='已通过'?'success':'danger')  ">
+                        <el-tag style="margin-left: 10px;" v-if="checkedStatus == '审核中'">
+                            {{checkedStatus}}
+                        </el-tag>
+                        <el-tag style="margin-left: 10px;" type="success" v-else-if="checkedStatus == '已通过'">
+                            {{checkedStatus}}
+                        </el-tag>
+                        <el-tag style="margin-left: 10px;" type="danger" v-else-if="checkedStatus == '已拒绝'">
                             {{checkedStatus}}
                         </el-tag>
                     </div>

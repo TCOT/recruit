@@ -8,7 +8,7 @@
                     <i class="el-icon-tickets" style="font-size: 24px"></i>
                     <span slot="title" style="font-size: 16px;">个人信息</span>
                 </el-menu-item>
-                <el-badge value="new" :hidden="hidden">
+                <el-badge value="new" :hidden="hidden" >
                     <el-menu-item index="2" @click="select(2)">
                         <i class="el-icon-view" style="font-size: 24px"></i>
                         <span slot="title" style="font-size: 16px;">项目列表</span>
@@ -66,6 +66,10 @@
 
 <style lang="scss">
     .wrapSMenu {
+        .el-badge__content.is-fixed {
+            margin-right: 13px;
+            margin-top: 10px;
+        }
         .el-col-12 {
             width: 100%;
             margin-top: 150px;

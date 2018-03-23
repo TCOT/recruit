@@ -291,7 +291,6 @@ router.post("/cheackRegister", (req, res, next) => {
             })
         } else {
             if (doc1) {
-                console.log(doc1)
                 res.json({
                     status: '01',
                     msg: '此学号已注册'
