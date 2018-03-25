@@ -58,6 +58,7 @@
     export default {
         data() {
             return {
+                draftPublish:{},
                 signUpTime: [],
                 loading: false,
                 publishLoading: false,
@@ -82,8 +83,11 @@
         },
         computed: {
             courier() {
-                if (this.draft.title !== '' ||
-                    this.draft.content !== '') {
+                if(this.draftPublish.content === undefined){
+                    return
+                }
+                if (this.draftPublish.title !== '' ||
+                    this.draftPublish.content !== '') {
                     this.$store.commit("updateDraft", true)
                 } else {
                     this.$store.commit("updateDraft", false)
@@ -107,7 +111,6 @@
                 })
             },
             inputChange() {
-                console.log(this.signUpTime)
                 this.last = false
                 this.first = true
                 this.saveInfo = '正在保存...'
@@ -130,6 +133,10 @@
                     title: self.draft.title,
                     content: self.draft.content
                 }).then(() => {
+                    self.draftPublish = {
+                        title: self.draft.title,
+                        content:self.draft.content
+                    }
                     self.last = true
                     self.saveInfo = '最近保存 ' + hour + ':' + minute
                     self.publishLoading = false

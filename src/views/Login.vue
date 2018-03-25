@@ -3,7 +3,7 @@
         <div class="top">
             <div class="loginPage-contetn">
                 <div class="title">
-                    <span style="color: #409EFF;font-size: 20px">信息工程学院项目发布中心</span>
+                    <span style="color: #409EFF;font-size: 22px">物联网工程系项目发布中心</span>
                 </div>
                 <el-card class="loginCard">
                     <el-tabs>

@@ -5,7 +5,8 @@ var Project = require('./../models/project');
 var User = require('./../models/user');
 require('./../util/util')
 //连接MongoDB数据库
-mongoose.connect('mongodb://127.0.0.1:27017/recruit');
+
+mongoose.connect('mongodb://user:user@127.0.0.1:27017/recruit');
 mongoose.connection.on("connected", function () {
     console.log("MongoDB connected success.")
 });

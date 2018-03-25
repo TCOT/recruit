@@ -6,8 +6,8 @@ var Project = require('./../models/project');
 require('./../util/util')
 
 //连接MongoDB数据库
-mongoose.connect('mongodb://127.0.0.1:27017/recruit');
 
+mongoose.connect('mongodb://user:user@127.0.0.1:27017/recruit');
 mongoose.connection.on("connected", function () {
     console.log("MongoDB connected success.")
 });
@@ -87,7 +87,6 @@ router.post("/signUpSave", async (req, res, next) => {
             if (project.projectId == req.body.projectId)
                 exist = true
         }
-        console.log(exist)
         if (exist) {
             User.update({
                     'userName': req.body.userName,
@@ -104,7 +103,6 @@ router.post("/signUpSave", async (req, res, next) => {
                 projectId: req.body.projectId,
                 signUpContent: req.body.signUpDraftContent
             }
-            console.log(projectDraft)
             await user.sDraft.push(projectDraft)
             await user.save()
         }

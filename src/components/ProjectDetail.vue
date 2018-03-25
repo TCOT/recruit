@@ -20,7 +20,7 @@
                     </div>
                 </el-tab-pane>
                 <el-tab-pane label="报名人员" name="second">
-                    <div v-if="this.detailFlag == false">
+                    <div v-show="this.detailFlag == false">
                         <el-table class="studentsList" :data="filterData"
                                   @sort-change="sortChange"
                                   @cell-click="cellClick"
@@ -96,7 +96,7 @@
                             </el-pagination>
                         </div>
                     </div>
-                    <div v-if="this.detailFlag == true">
+                    <div v-show="this.detailFlag == true">
                         <div class="noCheckedWrapper"
                              v-loading="loading"
                              style="margin-bottom: 250px">

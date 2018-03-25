@@ -49,7 +49,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <div class="block" style="margin-top: 10px">
+                <div class="block" style="margin-top: 30px">
                     <el-pagination
                             background
                             :current-page.sync="page"
@@ -142,11 +142,12 @@
 
         .listProjectTable {
             text-align: left;
+            height: 371px;
         }
 
         .allProjectCard {
             width: 800px;
-            height: 450px;
+            height: 480px;
             margin-top: 100px;
             margin-left: 70px;
         }

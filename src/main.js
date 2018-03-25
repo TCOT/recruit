@@ -13,6 +13,7 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import {ImageResize} from 'quill-image-resize-module'
+
 Quill.register('modules/ImageResize', {ImageResize})
 import './assets/font-awesome-4.7.0/css/font-awesome.min.css'
 
@@ -25,8 +26,8 @@ Vue.config.productionTip = false
 const store = new Vuex.Store({
     state: {
         nickName: '',
-        draft:false,
-        signUpDraft:[]
+        draft: false,
+        signUpDraft: []
     },
     mutations: {
         //更新用户信息
@@ -38,24 +39,55 @@ const store = new Vuex.Store({
             state.draft = draft;
         },
         //更新报名草稿显示图标
-        updateSignUpDraft(state,obj){
-            if(obj.status == 'delete'){
-                for(let item of state.signUpDraft ){
-                    if(item.projectId == obj.projectId){
-                        state.signUpDraft.pop(item)
-                    }
-                }
+        updateSignUpDraft(state, obj) {
+            // console.log("接收到的obj为")
+            // console.log(obj)
+            if (obj.status == 'delete') {
+                // console.log("进入delete,其数组为")
+                // console.log(state.signUpDraft)
+                // console.log("其所有projectId为")
+                // for (let i of state.signUpDraft) {
+                //     console.log(i.projectId)
+                // }
+                // console.log("匹配的projectId为")
+                // console.log(obj.projectId)
+                state.signUpDraft = state.signUpDraft.filter(i => i.projectId != obj.projectId)
+                // console.log("退出delete,其数组为")
+                // console.log(state.signUpDraft)
+                // console.log("其所有projectId为")
+                // for (let i of state.signUpDraft) {
+                //     console.log(i.projectId)
+                // }
+                return
             }
-            if(obj.status == 'keep'){
-                for(let item of state.signUpDraft ){
-                    if (item.projectId == obj.projectId){
+            if (obj.status == 'keep') {
+                // console.log("进入keep,其数组为")
+                // console.log(state.signUpDraft)
+                // console.log("其所有projectId为")
+                // for (let i of state.signUpDraft) {
+                //     console.log(i.projectId)
+                // }
+                for (let item of state.signUpDraft) {
+                    if (item.projectId == obj.projectId) {
+                        // console.log("退出keep,其数组为")
+                        // console.log(state.signUpDraft)
+                        // console.log("其所有projectId为")
+                        // for (let i of state.signUpDraft) {
+                        //     console.log(i.projectId)
+                        // }
                         return
                     }
                 }
-                let addProject ={
-                    projectId :obj.projectId
+                let addProject = {
+                    projectId: obj.projectId
                 }
                 state.signUpDraft.push(addProject)
+                // console.log("退出keep,其数组为")
+                // console.log(state.signUpDraft)
+                // console.log("其所有projectId为")
+                // for (let i of state.signUpDraft) {
+                //     console.log(i.projectId)
+                // }
             }
         }
     }
@@ -66,7 +98,7 @@ new Vue({
     store,
     router,
     mounted() {
-     this.checkLogin()
+        this.checkLogin()
 
     },
     methods: {
@@ -78,7 +110,7 @@ new Vue({
                     this.$store.commit("updateUserInfo", res.result.userName)
                     if (res.result.auth == "1") {
                         this.$router.push("/aindex")
-                    }else {
+                    } else {
                         this.$router.push("/sindex")
                     }
                 } else {

@@ -88,25 +88,31 @@
     export default {
         computed: {
             courier() {
-                if (this.signUpDraftContent) {
+                if(this.draftProject.content === undefined){
+                    return
+                }
+                if (this.draftProject.content !== '') {
                     let obj = {
-                        projectId: this.$route.params.id,
+                        projectId: this.draftProject.projectId,
                         status: 'keep'
                     }
                     this.$store.commit("updateSignUpDraft", obj)
-                } else {
+                    return
+                } else if( this.draftProject.content === ''){
                     let obj = {
-                        projectId: this.$route.params.id,
+                        projectId: this.draftProject.projectId,
                         status: 'delete'
                     }
                     this.$store.commit("updateSignUpDraft", obj)
+                    return
                 }
-                return
+
             }
         },
         data() {
             return {
                 timeOut: 0,
+                draftProject:{},
                 nowTime: '',
                 signUpDraftContent: '',
                 projectName: '',
@@ -121,6 +127,7 @@
                 signUpStatus: false,
                 SignUpContent: '',
                 checkedStatus: '',
+                menuFlag:'',
                 editorOption: {
                     modules: {
                         imageDrop: true,
@@ -148,6 +155,10 @@
                         signUpDraftContent: this.signUpDraftContent
                     }).then(() => {
                         this.last = true
+                        this.draftProject = {
+                            projectId :  this.$route.params.id,
+                            content:this.signUpDraftContent
+                        }
                         this.saveInfo = '最近保存 ' + hour + ':' + minute
                         this.signUpFlag = false
                     })
@@ -213,6 +224,10 @@
                                 type: 'success',
                                 message: '恭喜，报名成功！'
                             })
+                            this.draftProject = {
+                                projectId :  this.$route.params.id,
+                                content:''
+                            }
                             this.init()
                         }
                     })
