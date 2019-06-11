@@ -75,7 +75,7 @@
         },
         methods: {
             handleCurrentChange(page){
-                this.page = page
+                this.page = pagewo
             },
             async init() {
                 this.loading = true
@@ -86,6 +86,7 @@
                     }
                 })
                 this.loading = false
+
             },
             toDetail(index, row) {
                 this.$router.push('/aindex/project/' + row.projectId)

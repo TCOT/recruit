@@ -81,6 +81,7 @@ router.post("/signUpSave", async (req, res, next) => {
         if( !req.body.projectId ){
             return
         }
+        console.log('push测试')
         let user = await User.findOne({userName: req.body.userName})
         let exist = false
         for (let project of user.sDraft) {

@@ -3,7 +3,7 @@
         <div class="top">
             <div class="loginPage-contetn">
                 <div class="title">
-                    <span style="color: #409EFF;font-size: 22px">物联网工程系项目发布中心</span>
+                    <span style="color: #409EFF;font-size: 22px">院系项目发布中心</span>
                 </div>
                 <el-card class="loginCard">
                     <el-tabs>
@@ -94,220 +94,220 @@
 
                 if (value === '') {
                     callback(new Error('请输入学号'));
-                    this.flag1 = false
-                } else if (!reg1.test(value)) {
-                    callback(new Error('学号只允许6-10位的数字'));
-                    this.flag1 = false
-                } else {
-                    axios.post("/users/cheackRegister", {
-                        userName: this.ruleForm2.userName2
-                    }).then((response) => {
-                        let res = response.data;
-                        if (res.status == "01") {
-                            callback(new Error('该学号已被注册'));
-                        } else {
-                            callback();
-                            this.flag1 = true
-                        }
-                    })
-                }
-            }
-            var validatePass = (rule, value, callback) => {
-                var reg2 = /^[0-9a-zA-Z]{6,16}$/
-                if (value === '') {
-                    callback(new Error('请输入密码'));
-                    this.flag2 = false
-                } else if (!reg2.test(value)) {
-                    callback(new Error('密码只能由6-16位数字,字母组成'));
-                    this.flag2 = false
-                } else {
-                    callback()
-                    this.flag2 = true
-                }
-            }
-            var validatePass2 = (rule, value, callback) => {
-                if (value === '') {
-                    callback(new Error('请再次输入密码'));
-                    this.flag3 = false
-                } else if (value !== this.ruleForm2.pass) {
-                    callback(new Error('两次输入密码不一致!'));
-                    this.flag3 = false
-                } else {
-                    callback()
-                    this.flag3 = true
-                }
-            };
-            return {
-                rememberMe: false,
-                flag1: false,
-                flag2: false,
-                flag3: false,
-                ruleForm1: {
-                    userName: '',
-                    userPwd: '',
-                },
-                ruleForm2: {
-                    userName2: '',
-                    pass: '',
-                    checkPass: '',
-                },
-                rules1: {
-                    userName: [
-                        {validator: chaeckUserName1, trigger: 'change'}
-                    ],
-                    userPwd: [
-                        {validator: validatePass1, trigger: 'change'}
-                    ]
-                },
-                rules2: {
-                    userName2: [
-                        {validator: chaeckUserName2, trigger: 'blur'}
-                    ],
-                    pass: [
-                        {validator: validatePass, trigger: 'change'}
-                    ],
-                    checkPass: [
-                        {validator: validatePass2, trigger: 'change'}
-                    ],
-                },
-            };
-        },
-        methods: {
-            register() {
-                // alert(this.ruleForm2.userName)
-                if (this.flag1 && this.flag2 && this.flag3) {
-                    this.$confirm('请确认是否注册?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        axios.post("/users/register", {
-                            userName: this.ruleForm2.userName2,
-                            userPwd: this.ruleForm2.pass
-                        }).then((response) => {
-                            let res = response.data;
-                            if (res.status == "0") {
-                                this.$store.commit("updateUserInfo", this.ruleForm2.userName2)
-                                this.$router.push("/sindex")
-                            }
-                        });
-                    }).then(() => {
-                        this.$message({
-                            type: 'success',
-                            message: '注册成功!进入个人主页'
-                        });
-                    }).catch(() => {
-                        this.$message({
-                            type: 'info',
-                            message: '已取消注册'
-                        });
-                    })
+this.flag1 = false
+} else if (!reg1.test(value)) {
+callback(new Error('学号只允许6-10位的数字'));
+this.flag1 = false
+} else {
+axios.post("/users/cheackRegister", {
+userName: this.ruleForm2.userName2
+}).then((response) => {
+let res = response.data;
+if (res.status == "01") {
+callback(new Error('该学号已被注册'));
+} else {
+callback();
+this.flag1 = true
+}
+})
+}
+}
+var validatePass = (rule, value, callback) => {
+var reg2 = /^[0-9a-zA-Z]{6,16}$/
+if (value === '') {
+callback(new Error('请输入密码'));
+this.flag2 = false
+} else if (!reg2.test(value)) {
+callback(new Error('密码只能由6-16位数字,字母组成'));
+this.flag2 = false
+} else {
+callback()
+this.flag2 = true
+}
+}
+var validatePass2 = (rule, value, callback) => {
+if (value === '') {
+callback(new Error('请再次输入密码'));
+this.flag3 = false
+} else if (value !== this.ruleForm2.pass) {
+callback(new Error('两次输入密码不一致!'));
+this.flag3 = false
+} else {
+callback()
+this.flag3 = true
+}
+};
+return {
+rememberMe: false,
+flag1: false,
+flag2: false,
+flag3: false,
+ruleForm1: {
+userName: '',
+userPwd: '',
+},
+ruleForm2: {
+userName2: '',
+pass: '',
+checkPass: '',
+},
+rules1: {
+userName: [
+{validator: chaeckUserName1, trigger: 'change'}
+],
+userPwd: [
+{validator: validatePass1, trigger: 'change'}
+]
+},
+rules2: {
+userName2: [
+{validator: chaeckUserName2, trigger: 'blur'}
+],
+pass: [
+{validator: validatePass, trigger: 'change'}
+],
+checkPass: [
+{validator: validatePass2, trigger: 'change'}
+],
+},
+};
+},
+methods: {
+register() {
+// alert(this.ruleForm2.userName)
+if (this.flag1 && this.flag2 && this.flag3) {
+this.$confirm('请确认是否注册?', '提示', {
+confirmButtonText: '确定',
+cancelButtonText: '取消',
+type: 'warning'
+}).then(() => {
+axios.post("/users/register", {
+userName: this.ruleForm2.userName2,
+userPwd: this.ruleForm2.pass
+}).then((response) => {
+let res = response.data;
+if (res.status == "0") {
+this.$store.commit("updateUserInfo", this.ruleForm2.userName2)
+this.$router.push("/sindex")
+}
+});
+}).then(() => {
+this.$message({
+type: 'success',
+message: '注册成功!进入个人主页'
+});
+}).catch(() => {
+this.$message({
+type: 'info',
+message: '已取消注册'
+});
+})
 
-                } else {
-                    this.$message({
-                        showClose: true,
-                        message: '注册存在错误',
-                        type: 'error'
-                    });
-                }
-            },
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-            },
-            login() {
-                if (!this.ruleForm1.userName || !this.ruleForm1.userPwd) {
-                    this.$message({
-                        type: 'error',
-                        message: '账号或密码为空',
-                        center: true
-                    });
-                    return;
-                }
-                axios.post("/users/login", {
-                    userName: this.ruleForm1.userName,
-                    userPwd: this.ruleForm1.userPwd,
-                    rememberMe: this.rememberMe
-                }).then((response) => {
-                    // alert("---")
-                    let res = response.data;
-                    if (res.status == "01") {
-                        this.$store.commit("updateUserInfo", res.result.userName)
-                        this.$router.push("/aindex/projectlist")
-                        this.$message({
-                            type: 'success',
-                            message: '欢迎进入管理界面',
-                            center: true
-                        });
-                    } else if (res.status == "00") {
-                        this.$store.commit("updateUserInfo", res.result.userName)
-                        this.$router.push("/sindex/sinfo")
-                        this.$message({
-                            type: 'success',
-                            message: '登陆成功，进入个人主页',
-                            center: true
-                        });
-                    } else {
-                        this.$message.error('账号或密码错误');
-                    }
-                });
-            }
-        },
-        components: {
-            AFooter
-        }
-    }
+} else {
+this.$message({
+showClose: true,
+message: '注册存在错误',
+type: 'error'
+});
+}
+},
+resetForm(formName) {
+this.$refs[formName].resetFields();
+},
+login() {
+if (!this.ruleForm1.userName || !this.ruleForm1.userPwd) {
+this.$message({
+type: 'error',
+message: '账号或密码为空',
+center: true
+});
+return;
+}
+axios.post("/users/login", {
+userName: this.ruleForm1.userName,
+userPwd: this.ruleForm1.userPwd,
+rememberMe: this.rememberMe
+}).then((response) => {
+// alert("---")
+let res = response.data;
+if (res.status == "01") {
+this.$store.commit("updateUserInfo", res.result.userName)
+this.$router.push("/aindex/projectlist")
+this.$message({
+type: 'success',
+message: '欢迎进入管理界面',
+center: true
+});
+} else if (res.status == "00") {
+this.$store.commit("updateUserInfo", res.result.userName)
+this.$router.push("/sindex/sinfo")
+this.$message({
+type: 'success',
+message: '登陆成功，进入个人主页',
+center: true
+});
+} else {
+this.$message.error('账号或密码错误');
+}
+});
+}
+},
+components: {
+AFooter
+}
+}
 </script>
 
 <style lang="scss">
-    .wrapLogin {
-        .title{
-            text-align: center;
-            width: 500px;
-            margin: 0 auto;
-            clear: both;
-            border-bottom: 2px solid #409EFF;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-        .loginPage-contetn {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 2px;
-            min-height: 688px;
-            height: calc(100% - 42px);
-            box-sizing: border-box;
-        }
-
-        .el-tabs__content {
-            display: flex;
-        }
-
-        .el-form-item__label {
-            font-size: 18px;
-            color: #1a1a1a;
-            text-align: left;
-        }
-
-        .el-tabs__item {
-            font-size: 17px;
-        }
-
-        .top {
-            background-image: url(./../assets/0.png);
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-size: cover;
-            width: 100%;
-            height: 100vh;
-        }
-
-        .loginCard {
-            width: 432px;
-            height: 350px;
-            margin-bottom: 160px;
-        }
+.wrapLogin {
+.title{
+        text-align: center;
+        width: 500px;
+        margin: 0 auto;
+        clear: both;
+        border-bottom: 2px solid #409EFF;
+        padding: 10px;
+        margin-bottom: 20px;
     }
+.loginPage-contetn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 2px;
+        min-height: 688px;
+        height: calc(100% - 42px);
+        box-sizing: border-box;
+    }
+
+.el-tabs__content {
+        display: flex;
+    }
+
+.el-form-item__label {
+        font-size: 18px;
+        color: #1a1a1a;
+        text-align: left;
+    }
+
+.el-tabs__item {
+        font-size: 17px;
+    }
+
+.top {
+        background-image: url(./../assets/0.png);
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+        height: 100vh;
+    }
+
+.loginCard {
+        width: 432px;
+        height: 350px;
+        margin-bottom: 160px;
+    }
+}
 </style>
