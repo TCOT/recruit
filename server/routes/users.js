@@ -104,6 +104,7 @@ router.post("/signUpSave", async (req, res, next) => {
                 projectId: req.body.projectId,
                 signUpContent: req.body.signUpDraftContent
             }
+
             await user.sDraft.push(projectDraft)
             await user.save()
         }
