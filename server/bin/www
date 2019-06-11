@@ -15,6 +15,7 @@ var http = require('http');
 var port = normalizePort(process.env.PORT || '3100');
 app.set('port', port);
 
+console.log('---------------------这是testPush子分支——————----------------------------')
 /**
  * Create HTTP server.
  */
@@ -53,14 +54,14 @@ console.log('push测试')
  * Event listener for HTTP server "error" event.
  */
 
+
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-
   var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+      ? 'Pipe ' + port
+      : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -76,7 +77,6 @@ function onError(error) {
       throw error;
   }
 }
-
 /**
  * Event listener for HTTP server "listening" event.
  */
@@ -84,7 +84,7 @@ function onError(error) {
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
